@@ -1,0 +1,1617 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>마이로그</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: an A6 notebook (105×148) sized to the screen — one page on phones and portrait tablets, an open two-page spread when two A6 pages fit side by side. */
+:root{
+  --desk:#ffffff; --deskdot:#bdbdbd; --pagedot:#d9d9d9; --boxdot:#e3e3e3; --page:#ffffff; --soft:#f3f3f3; --line:#e2e2e2; --edge:#000000;
+  --ink:#000000; --muted:#444444; --faint:#7a7a7a;
+  --accent:#000000; --accent-soft:#ececec; --pri:#000000; --ok:#000000;
+  --f:"Noto Sans KR","Noto Sans CJK KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --row:46px; --pad:20px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#000000; --deskdot:#4a4a4a; --pagedot:#333333; --boxdot:#2a2a2a; --page:#141414; --soft:#202020; --line:#2c2c2c; --edge:#ffffff;
+  --ink:#ffffff; --muted:#c4c4c4; --faint:#8c8c8c;
+  --accent:#ffffff; --accent-soft:#2a2a2a; --pri:#ffffff; --ok:#ffffff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --desk:#000000; --deskdot:#4a4a4a; --pagedot:#333333; --boxdot:#2a2a2a; --page:#141414; --soft:#202020; --line:#2c2c2c; --edge:#ffffff;
+  --ink:#ffffff; --muted:#c4c4c4; --faint:#8c8c8c;
+  --accent:#ffffff; --accent-soft:#2a2a2a; --pri:#ffffff; --ok:#ffffff; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--desk);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.6;font-variant-numeric:tabular-nums;
+  background-image:radial-gradient(circle,var(--deskdot) 1px,transparent 1.3px);background-size:20px 20px;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+input,textarea,select{font:inherit;color:var(--ink)}
+h2{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+
+.desk{padding-inline:16px;padding-block:10px 16px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.top{width:var(--bookw,100%);max-width:100%}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding-inline:4px}
+.brand b{font-size:15px;font-weight:700}
+.sync{font-size:11.5px;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-top:6px;background:var(--page);border-radius:12px;padding:4px;box-shadow:0 1px 2px rgb(0 0 0 / .08),0 4px 12px rgb(0 0 0 / .06)}
+.tab[aria-selected="true"] .badge{background:var(--page);color:var(--ink)}
+.tabs{overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+/* mandalart */
+.m9{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px}
+.m3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+.mc{aspect-ratio:1;background:var(--soft);border-radius:6px;font-size:12px;line-height:1.3;padding:4px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;word-break:keep-all;overflow-wrap:anywhere;min-width:0}
+.m9 .mc{font-size:10.5px;border-radius:4px;padding:2px}
+.m3.solo{margin-top:14px;gap:6px}
+.m3.solo .mc{font-size:15px;border-radius:10px;padding:8px}
+.mc .ph{color:var(--faint);font-weight:400}
+.mc.subt{background:var(--accent-soft);font-weight:700}
+.mc.core{background:var(--ink);color:var(--page);font-weight:700}
+.mc.core .ph{color:var(--page);opacity:.7}
+.mc.done{text-decoration:line-through;color:var(--faint)}
+.pbar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:4px}
+.pbar i{display:block;height:100%;background:var(--ink)}
+.prog{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.prog:last-child{border-bottom:0}
+.prog div:first-child{display:flex;justify-content:space-between;gap:8px}
+/* perpetual diary */
+.dtxt{width:100%;min-height:130px;resize:vertical;line-height:1.7;font-size:16px;display:block;background:var(--page)}
+.dy{margin-top:14px}
+.dyh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.dyh b{font-size:18px}
+.dyr{display:block;width:100%;text-align:left;padding:12px 0;border-bottom:1px solid var(--line)}
+.dyr b{display:block;font-size:13px;color:var(--muted)}
+.dyr span{white-space:pre-wrap;overflow-wrap:anywhere}
+.tab{flex:1 0 auto;padding:7px 10px;font-size:14px;color:var(--muted);border-radius:9px;display:flex;justify-content:center;gap:5px;align-items:center;white-space:nowrap;font-weight:500}
+.tab[aria-selected="true"]{color:var(--page);background:var(--ink);font-weight:700}
+.badge{font-size:11px;background:var(--pri);color:var(--page);border-radius:9px;padding:0 6px;line-height:18px;font-weight:700}
+
+.book{display:flex;gap:0;justify-content:center;max-width:100%}
+.page{width:var(--pw,100%);height:var(--ph,auto);background:var(--page);border-radius:10px;box-shadow:0 1px 2px rgb(0 0 0 / .08),0 8px 24px rgb(0 0 0 / .10);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;min-width:0}
+.pbody{background-image:radial-gradient(circle,var(--pagedot) 1px,transparent 1.3px);background-size:20px 20px;background-position:10px 10px;background-attachment:local}
+/* dot grid everywhere else too */
+.phead,.composer,.pfoot,.tabs,.panel,.fbox,.hcard,.empty,.sheet{background-image:radial-gradient(circle,var(--pagedot) 1px,transparent 1.3px);background-size:20px 20px;background-position:10px 10px}
+.pfoot{background-color:var(--page)}.book.spread .page:first-child{border-radius:10px 2px 2px 10px}
+.book.spread .page:last-child{border-radius:2px 10px 10px 2px}
+.book.spread .page:first-child::after,.book.spread .page:last-child::before{content:"";position:absolute;top:0;bottom:0;width:22px;pointer-events:none}
+.book.spread .page:first-child::after{right:0;background:linear-gradient(to left,rgb(0 0 0 / .07),transparent)}
+.book.spread .page:last-child::before{left:0;background:linear-gradient(to right,rgb(0 0 0 / .07),transparent)}
+.pbody{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 var(--pad) 20px;min-height:0;-webkit-overflow-scrolling:touch}
+.phead{position:sticky;top:0;z-index:2;background:var(--page);box-shadow:0 0 0 0 transparent;padding-top:14px;padding-bottom:8px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.pfoot{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);padding:6px var(--pad) 8px;border-top:1px solid var(--line)}
+
+.dayhead{display:flex;align-items:center;gap:12px}
+.dayhead .num{font-size:40px;font-weight:700;line-height:1;letter-spacing:-.03em}
+.dayhead .meta{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.35}
+.dayhead .meta span:first-child{font-weight:700;font-size:16px}
+.dayhead .meta span:last-child{font-size:13px;color:var(--muted)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nav{display:flex;gap:2px}
+.iconbtn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:22px;color:var(--muted);flex:none}
+.iconbtn:hover{background:var(--soft);color:var(--ink)}
+.pill{font-size:13px;padding:6px 12px;border-radius:14px;background:var(--accent-soft);color:var(--accent);font-weight:700;flex:none}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-block:10px 4px}
+.chip{font-size:14px;padding:5px 12px;border-radius:16px;border:1px solid var(--line);background:var(--page);color:var(--muted)}
+.chip.on{background:var(--ok);border-color:var(--ok);color:var(--page);font-weight:500}
+
+.entries{list-style:none;margin:0;padding:0}
+.entry{display:grid;grid-template-columns:14px 34px minmax(0,1fr) 34px;align-items:start;min-height:var(--row);border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0}
+.entry .p{color:var(--pri);font-size:17px;font-weight:700;padding-top:11px;text-align:center}
+.sig{width:34px;height:var(--row);display:grid;place-items:center;font-size:19px;font-weight:700;color:var(--ink)}
+.sig[disabled]{cursor:default}
+.txt{padding-block:11px;min-width:0;overflow-wrap:anywhere;line-height:1.5}
+.from{display:block;font-size:12px;color:var(--faint);line-height:1.4}
+.more{width:34px;height:var(--row);color:var(--faint);font-size:16px;letter-spacing:1px}
+.entry.done .txt,.entry.migrated .txt,.entry.scheduled .txt,.entry.released .txt{color:var(--faint)}
+.tabs{gap:4px}
+.tabscroll{flex:1;min-width:0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabscroll::-webkit-scrollbar{display:none}
+.tab.gear{flex:0 0 auto;padding:7px 12px;font-size:16px}
+.sheet{max-height:88vh;overflow-y:auto}
+.srow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.srow.off .sname{color:var(--faint)}
+.sname{display:flex;flex-direction:column;line-height:1.35;min-width:0}
+.sname small{font-size:12px;color:var(--muted)}
+.srow.off .sname small{color:var(--faint)}
+.srow{grid-template-columns:auto minmax(0,1fr) auto}
+.pairrow{align-items:center}
+.field.sel{flex:0 1 auto;width:auto;max-width:55%;padding:6px 10px;font-size:16px}
+.srow.dragging{background:var(--page)}
+.handle{width:44px;height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:grab;touch-action:none;border-radius:8px}
+.handle i{display:block;width:18px;height:2px;border-radius:1px;background:var(--faint)}
+.handle:hover i,.handle:focus-visible i{background:var(--ink)}
+.srow.dragging{position:relative;z-index:2;box-shadow:0 6px 18px rgb(0 0 0 / .14);border-radius:10px;border-bottom-color:transparent;padding-inline:8px;margin-inline:-8px}
+.srow.dragging .handle{cursor:grabbing}
+.srow.dragging .handle i{background:var(--ink)}
+.iconbtn.sm{width:32px;height:32px;font-size:16px}
+.iconbtn[disabled]{opacity:.25;cursor:default}
+.sw{position:relative;width:44px;height:26px;flex:none;cursor:pointer}
+.sw input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.sw span{position:absolute;inset:0;border-radius:13px;background:var(--line);transition:background .15s}
+.sw span::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--page);box-shadow:0 1px 2px rgb(0 0 0 / .2);transition:transform .15s}
+.sw input:checked + span{background:var(--ink)}
+.sw input:checked + span::after{transform:translateX(18px)}
+.sw input:focus-visible + span{outline:2px solid var(--ink);outline-offset:2px}
+.mdot{display:inline-block;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);background:conic-gradient(var(--ink) calc(var(--f) * 1turn),transparent 0);flex:none;vertical-align:-2px}
+.mdot.big{width:22px;height:22px}
+.moodrow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.mbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border-radius:10px;font-size:12px;color:var(--muted)}
+.mbtn[aria-pressed="true"]{background:var(--page);color:var(--ink);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--ink)}
+.moodcal{margin-top:12px}
+.moodcal .cell{height:52px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding-top:4px;font-size:13px}
+.moodcal .cell.today .n{font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.moodlegend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:13px;color:var(--muted)}
+.moodlegend span{display:flex;align-items:center;gap:5px}
+.wday{padding:10px 0;border-bottom:1px solid var(--line)}
+.wday.today .wh b{text-decoration:underline;text-underline-offset:4px}
+.idx{display:flex;flex-direction:column}
+.idxrow{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px dotted var(--faint);text-align:left;font-size:15.5px}
+.idxrow i{font-style:normal;color:var(--muted);font-size:13px;min-width:2ch;text-align:right}
+.whrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.whrow .iconbtn{color:var(--faint)}
+#qaTypes{flex:none;padding-block:2px}
+.wh{display:flex;gap:8px;align-items:baseline;width:100%;text-align:left}
+.wh b{font-size:15px}
+.wh span{font-size:12px;color:var(--muted)}
+.wl{list-style:none;margin:6px 0 0;padding:0;font-size:14.5px;display:flex;flex-direction:column;gap:3px}
+.wl li{display:grid;grid-template-columns:20px minmax(0,1fr);overflow-wrap:anywhere}
+.wl li i{font-style:normal;font-weight:700;text-align:center}
+.wl li.done,.wl li.cancelled{color:var(--faint)}
+.wl li.cancelled{text-decoration:line-through}
+.dtxt.dump{min-height:60vh;margin-top:12px}
+.seg{display:flex;gap:2px;padding-top:10px}
+.seg button{flex:1;padding:7px 0;font-size:14px;color:var(--muted);border-bottom:2px solid var(--line)}
+.seg button[aria-pressed="true"]{color:var(--ink);font-weight:700;border-color:var(--ink)}
+.quiet{color:var(--muted);font-size:14.5px;margin:16px 0 0}
+.link{color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-size:14px}
+.past{margin-top:18px}
+.dtxt.short{min-height:66px;font-size:16px}
+.type{min-width:max-content}
+.types{flex-wrap:nowrap}
+.typescroll{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding-block:2px;
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent)}
+.typescroll::-webkit-scrollbar{display:none}
+.typescroll .type{scroll-snap-align:start}
+.types .star{margin-left:0}
+.type.more{border-color:transparent;background:transparent;text-decoration:underline;text-underline-offset:3px;padding-inline:6px;color:var(--ink)}
+.entry.idea .txt{font-weight:500}
+.entry.thanks .txt{color:var(--muted)}
+.entry.cancelled .txt{color:var(--faint);text-decoration:line-through}
+.entry.note .txt{color:var(--muted)}
+.entry.event .sig{color:var(--accent)}
+.entry.withmig{grid-template-columns:14px 34px minmax(0,1fr) auto}
+.mig{font-size:13px;color:var(--accent);padding:0 4px 0 8px;height:var(--row);font-weight:700;white-space:nowrap}
+
+.empty{border-radius:12px;padding:16px;background:var(--soft);margin-top:12px}
+.empty p{margin:0 0 12px;color:var(--muted)}
+.legend{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 14px;font-size:15px}
+.legend dt{text-align:center;width:20px;font-weight:700}
+.legend dd{margin:0;color:var(--muted)}
+.btn{padding:9px 14px;border-radius:10px;background:var(--accent);color:var(--page);font-weight:700;font-size:14px;white-space:nowrap}
+.btn.ghost{background:var(--accent-soft);color:var(--accent)}
+.btn.sm{padding:6px 11px;font-size:13px}
+
+.composer{border-top:1px solid var(--line);background:var(--soft);padding:10px var(--pad) 12px;display:flex;flex-direction:column;gap:8px}
+.types{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.type,.star,.tab,.pill,.mig,.xbtn,.chip{white-space:nowrap;flex-shrink:0}
+.type{padding:4px 11px;border-radius:14px;font-size:13.5px;color:var(--muted);border:1px solid var(--line);background:var(--page)}
+.type[aria-pressed="true"]{background:var(--ink);color:var(--page);border-color:var(--ink)}
+.type i{font-style:normal;margin-right:4px;font-weight:700}
+.star{margin-left:auto;padding:4px 11px;border-radius:14px;font-size:13.5px;border:1px solid var(--line);color:var(--muted);background:var(--page)}
+.star[aria-pressed="true"]{color:var(--pri);border-color:var(--pri)}
+.row{display:flex;gap:8px}
+.row input,.field{flex:1;min-width:0;font-size:16px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--page)}
+
+.section-title{font-size:13px;color:var(--muted);margin:18px 0 4px;font-weight:700}
+.panel{background:var(--soft);border-radius:12px;padding:14px;margin-top:12px}
+.panel h4{margin:0 0 8px;font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.panel h4 button{font-size:13px;color:var(--accent);font-weight:700}
+.panel .muted{color:var(--muted);font-size:14px;margin:0}
+.panel .entry{min-height:40px}
+.panel .sig,.panel .mig,.panel .more{height:40px}
+.panel .entry .p{padding-top:8px}
+.panel .txt{padding-block:8px;font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats b{display:block;font-size:22px;line-height:1.3}
+.stats span{font-size:12px;color:var(--muted)}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
+.kv:last-child{border-bottom:0}
+.kv b{color:var(--ok)}
+.divider{height:1px;background:var(--line);margin:22px 0 4px}
+
+/* monthly list (simple) */
+.mday{display:grid;grid-template-columns:54px minmax(0,1fr);gap:10px;width:100%;text-align:left;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.mday .d{font-size:14px;color:var(--muted);font-weight:500}
+.sun{color:var(--pri)!important} .sat{color:var(--accent)!important}
+.mday.today{background:var(--accent-soft);border-radius:8px;padding-inline:8px;margin-inline:-8px;width:calc(100% + 16px)}
+.mday .s{min-width:0;font-size:15px;overflow-wrap:anywhere}
+.ev{color:var(--accent)}
+.mday .s small{display:block;color:var(--muted);font-size:13px}
+
+/* calendars */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.cal .wd{font-size:12px;color:var(--muted);text-align:center;padding:4px 0;font-weight:700}
+.cell{min-width:0;text-align:left;border-radius:8px;position:relative}
+.cal.mini .cell{height:36px;display:grid;place-items:center;font-size:14px}
+.cal.mini .cell.has::after{content:"";position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent)}
+.cal.mini .cell.sel{background:var(--ink);color:var(--page)}
+.cal.mini .cell.sel::after{background:var(--page)}
+.cell.today{font-weight:700;color:var(--accent)}
+.cal.big{gap:0;border-top:1px solid var(--line);margin-top:8px}
+.cal.big .wd{border-bottom:1px solid var(--line);padding:6px 0}
+.cal.big .cell{border-radius:0;min-height:84px;padding:5px 4px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:1px;font-size:12px;line-height:1.35;align-items:stretch}
+.cal.big .cell:nth-child(7n+1):not(.wd){}
+.cal.big .cell:hover{background:var(--soft)}
+.cal.big .cell .n{font-size:13px;font-weight:700;padding-inline:2px}
+.cal.big .cell.today .n{background:var(--accent);color:var(--page);border-radius:10px;padding:0 7px;align-self:flex-start}
+.cal.big .line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal.big small{color:var(--muted);font-size:11px}
+.cell.blank{pointer-events:none}
+
+/* future */
+.fgrid{display:grid;gap:12px;margin-top:12px}
+.fgrid.two{grid-template-columns:1fr 1fr}
+.fbox{background:var(--soft);border-radius:12px;padding:12px 14px;min-width:0}
+.fbox h3{margin:0 0 4px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+.fbox h3 small{font-size:12px;color:var(--muted);font-weight:500}
+.fbox .entry{min-height:40px}
+.fbox .sig,.fbox .more{height:40px}
+.fbox .entry .p{padding-top:8px}
+.fbox .txt{padding-block:8px;font-size:15px}
+.fbox form{margin-top:6px}
+.fbox .field{font-size:16px;padding:7px 10px}
+
+/* habits */
+.hcard{background:var(--soft);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.htop{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.htop b{font-size:16px;min-width:0;overflow-wrap:anywhere}
+.htop small{color:var(--muted);font-size:13px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.dot{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted)}
+.dot span{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line);background:var(--page);display:grid;place-items:center;font-size:13px}
+.dot.on span{background:var(--ok);border-color:var(--ok);color:var(--page)}
+.dot.today span{border-color:var(--ink)}
+.dot.on.today span{border-color:var(--ok)}
+.suggest{display:flex;flex-wrap:wrap;gap:6px}
+.tablewrap{overflow-x:auto;margin-top:10px;border:1px solid var(--line);border-radius:10px}
+table.ht{border-collapse:collapse;font-size:12px}
+.ht th,.ht td{border-bottom:1px solid var(--line);padding:0;text-align:center}
+.ht thead th{padding:6px 0;color:var(--muted);font-weight:500;min-width:28px;line-height:1.25}
+.ht thead th.today{color:var(--accent);font-weight:700}
+.ht th.name{position:sticky;left:0;background:var(--page);text-align:left;padding:8px 10px;min-width:96px;max-width:140px;font-size:13px;font-weight:700;z-index:1;line-height:1.35}
+.ht td button{width:28px;height:34px;display:grid;place-items:center}
+.ht td button i{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--faint);display:block;opacity:.6}
+.ht td button.on i{background:var(--ok);border-color:var(--ok);opacity:1}
+.ht td.rate{padding:0 10px;font-weight:700;color:var(--ok);min-width:52px}
+.ht tr:last-child th,.ht tr:last-child td{border-bottom:0}
+.xbtn{color:var(--faint);font-size:12px;font-weight:500;display:inline-block}
+.xbtn.armed{color:var(--pri);font-weight:700}
+
+/* sheet & toast */
+.scrim{position:fixed;inset:0;background:rgb(10 12 25 / .4);z-index:20}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--page);border-radius:16px 16px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.sheet .in{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.sheet .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 4px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.act{padding:12px;border-radius:10px;background:var(--soft);text-align:left;font-size:14.5px}
+.act.danger{color:var(--pri)}
+.act.armed{background:var(--pri);color:var(--page)}
+.datepick{display:flex;gap:8px;align-items:center}
+.datepick input{flex:1;min-width:0;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--soft)}
+.toast{position:fixed;left:50%;bottom:calc(40px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--page);padding:9px 14px;border-radius:10px;font-size:14px;z-index:30;max-width:calc(100% - 32px);display:flex;gap:14px;align-items:center}
+.toast button{color:var(--page);font-weight:700;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+@media (min-width:700px){.sheet{left:50%;right:auto;bottom:24px;width:480px;margin-left:-240px;border-radius:16px;padding-bottom:16px}}
+/* dot grid on boxes — placed last so each box's own background shorthand can't erase it */
+.phead,.composer,.pfoot,.tabs,.panel,.fbox,.hcard,.empty,.sheet,.act{background-image:radial-gradient(circle,var(--boxdot) 1px,transparent 1.3px);background-size:20px 20px;background-position:10px 10px}
+@media (prefers-reduced-motion:no-preference){.book.turn-l .pbody{animation:tl .22s ease-out}.book.turn-r .pbody{animation:tr .22s ease-out}@keyframes tl{from{transform:translateX(24px);opacity:.4}}@keyframes tr{from{transform:translateX(-24px);opacity:.4}}}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
+</style>
+
+<div class="desk">
+  <div class="top" id="top">
+    <div class="brand"><b>마이로그</b><span class="sync" id="sync">이 기기에 저장</span></div>
+    <nav class="tabs" role="tablist">
+      <div class="tabscroll" id="tabList"></div>
+      <button class="tab gear" id="quickAdd" aria-label="오늘에 빠르게 기록하기">＋</button>
+      <button class="tab gear" id="openSettings" aria-label="페이지 설정">⚙</button>
+    </nav>
+  </div>
+  <div class="book" id="book">
+    <article class="page" id="pageA">
+      <div class="pbody" id="bodyA"></div>
+      <form class="composer" id="composer" autocomplete="off">
+        <div class="types" role="group" aria-label="기록 종류">
+          <div id="typeChips" class="typescroll"></div>
+          <button type="button" class="star" id="star" aria-pressed="false">* 중요</button>
+        </div>
+        <div class="row">
+          <input id="entryText" placeholder="빠르게 기록하기" maxlength="300" enterkeyhint="done" aria-label="기록 내용">
+          <button class="btn" type="submit">추가</button>
+        </div>
+      </form>
+      <div class="pfoot"><span id="footA"></span><span id="numA"></span></div>
+    </article>
+    <article class="page" id="pageB" hidden>
+      <div class="pbody" id="bodyB"></div>
+      <div class="pfoot"><span id="footB"></span><span id="numB"></span></div>
+    </article>
+  </div>
+</div>
+
+<div id="sheetRoot" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+const WD = ['일','월','화','수','목','금','토'];
+const SIG = {
+  task:{open:'•',done:'×',migrated:'>',scheduled:'<',cancelled:'•'},
+  event:{open:'○',done:'●',migrated:'>',scheduled:'<',cancelled:'○'},
+  note:{open:'–',done:'–',migrated:'–',cancelled:'–'},
+  idea:{open:'!',done:'!',migrated:'!',cancelled:'!'},
+  question:{open:'?',done:'×',migrated:'>',scheduled:'<',cancelled:'?'},
+  thanks:{open:'♡',done:'♡',migrated:'♡',cancelled:'♡'}
+};
+const TOGGLE = ['task','question'], MOVABLE = ['task','event','question'];
+const BUILTIN = [{id:'task',sym:'•',name:'할 일'},{id:'event',sym:'○',name:'일정'},{id:'note',sym:'–',name:'메모'},{id:'idea',sym:'!',name:'아이디어'},{id:'question',sym:'?',name:'알아볼 것'},{id:'thanks',sym:'♡',name:'감사'}];
+const customOf = id => (S.settings?.types || []).find(t => t.id === id);
+const allTypes = () => [...BUILTIN, ...(S.settings?.types || [])];
+const togg = e => TOGGLE.includes(e.type) || !!(customOf(e.type)?.toggle ?? e.toggle);
+const movable = e => MOVABLE.includes(e.type) || !!(customOf(e.type)?.toggle ?? e.toggle);
+const extra = e => e.sym ? {sym:e.sym, toggle:!!e.toggle} : {};
+function sigOf(e){
+  if (SIG[e.type]) return SIG[e.type][e.state] || SIG[e.type].open;
+  const c = customOf(e.type), sym = c?.sym || e.sym || '•';
+  if (e.state === 'done' && togg(e)) return '×';
+  if (e.state === 'migrated') return '>';
+  if (e.state === 'scheduled') return '<';
+  return sym;
+}
+const pad = n => String(n).padStart(2,'0');
+const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const dateOf = k => { const [y,m,d] = k.split('-').map(Number); return new Date(y,m-1,d||1); };
+const addDays = (k,n) => { const d = dateOf(k); d.setDate(d.getDate()+n); return keyOf(d); };
+const addMonths = (m,n) => { const d = dateOf(m+'-01'); d.setMonth(d.getMonth()+n); return keyOf(d).slice(0,7); };
+const todayKey = () => keyOf(new Date());
+const short = k => { const d = dateOf(k); return `${d.getMonth()+1}/${d.getDate()}(${WD[d.getDay()]})`; };
+const monthLabel = m => { const [y,mm] = m.split('-').map(Number); return `${y}년 ${mm}월`; };
+const daysIn = m => { const [y,mm] = m.split('-').map(Number); return new Date(y,mm,0).getDate(); };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isDay = k => /^\d{4}-\d{2}-\d{2}$/.test(k);
+
+/* ---------- A6 page sizing ---------- */
+const R = 148/105, GAP = 0;
+let spread = false, detail = false;
+const book = document.getElementById('book'), top_ = document.getElementById('top'), pageB = document.getElementById('pageB');
+function layout(){
+  const W = document.documentElement.clientWidth - 32;
+  const H = window.innerHeight - top_.offsetHeight - 40;
+  const s2 = Math.min((W - GAP) / 2, H / R);
+  const wasSpread = spread, wasDetail = detail;
+  spread = s2 >= 360;
+  let pw = spread ? s2 : Math.min(W, Math.max(H / R, Math.min(W, 340)));
+  pw = Math.floor(pw);
+  detail = spread || pw >= 520;
+  book.style.setProperty('--pw', pw + 'px');
+  // phones: keep the A6 width but let the page run to the bottom of the screen
+  book.style.setProperty('--ph', Math.floor(spread || detail ? pw * R : Math.max(pw * R, H)) + 'px');
+  document.documentElement.style.setProperty('--bookw', (spread ? pw * 2 + GAP : pw) + 'px');
+  document.documentElement.style.setProperty('--pad', pw < 380 ? '16px' : pw < 560 ? '20px' : '28px');
+  book.classList.toggle('spread', spread);
+  pageB.hidden = !spread;
+  return wasSpread !== spread || wasDetail !== detail;
+}
+let rt, lastW = document.documentElement.clientWidth;
+window.addEventListener('resize', () => {
+  clearTimeout(rt);
+  rt = setTimeout(() => {
+    const w = document.documentElement.clientWidth, a = document.activeElement;
+    // the on-screen keyboard changes only the height: keep the page as it is while typing
+    if (w === lastW && a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+    lastW = w; layout(); render();
+  }, 120);
+});
+
+/* ---------- data ---------- */
+const SIMPLE = ['lists','mood','reviews','dump'];
+const blankSimple = () => ({lists:{lists:[]}, mood:{}, reviews:{}, dump:{text:''}});
+const blankS = () => ({days:{}, future:{items:[], del:[]}, habits:{list:[], log:{}}, settings:{types:[]}, mandal:null, diary:{}, ...blankSimple()});
+function normalizeS(v){
+  const n = blankS(); if (!v || typeof v !== 'object') return n;
+  if (v.days && typeof v.days === 'object') for (const k of Object.keys(v.days)) if (isDay(k) && Array.isArray(v.days[k]?.entries)) n.days[k] = {entries:v.days[k].entries, del:v.days[k].del || []};
+  if (v.future && Array.isArray(v.future.items)) n.future = {items:v.future.items, del:v.future.del || []};
+  if (v.habits && Array.isArray(v.habits.list)) n.habits = {list:v.habits.list, log:v.habits.log || {}};
+  if (v.settings && typeof v.settings === 'object') n.settings = {types:[], ...v.settings};
+  if (v.mandal && Array.isArray(v.mandal.subs)) n.mandal = v.mandal;
+  if (v.diary && typeof v.diary === 'object') n.diary = v.diary;
+  for (const k of SIMPLE) if (v[k] && typeof v[k] === 'object') n[k] = v[k];
+  return n;
+}
+let S = blankS();
+const LS = 'bujo.v2', LSD = 'bujo.dirty';
+try {
+  const v2 = JSON.parse(localStorage.getItem(LS) || 'null');
+  if (v2) S = normalizeS(v2);
+  else { const v1 = JSON.parse(localStorage.getItem('bujo.days.v1') || 'null'); if (v1) S = normalizeS({days:v1}); }
+} catch(e) {}
+const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e) {} };
+const clone = x => x === undefined || x === null ? x : JSON.parse(JSON.stringify(x));
+
+/* each synced document ("part") of S, addressed by its document id */
+function getPart(k, src = S){
+  if (SIMPLE.includes(k)) return src[k];
+  if (k === 'mandal') return src.mandal;
+  if (k.startsWith('diary-')) return src.diary[k.slice(6)];
+  if (k === 'settings') return src.settings;
+  if (k === 'future') return src.future;
+  if (k === 'habits') return src.habits;
+  return src.days[k];
+}
+function setPart(k, v){
+  if (SIMPLE.includes(k)) S[k] = v ?? blankSimple()[k];
+  else if (k === 'mandal') S.mandal = v ?? null;
+  else if (k.startsWith('diary-')) { if (v && Object.keys(v).length) S.diary[k.slice(6)] = v; else delete S.diary[k.slice(6)]; }
+  else if (k === 'settings') S.settings = v ?? {types:[]};
+  else if (k === 'future') S.future = v ?? {items:[], del:[]};
+  else if (k === 'habits') S.habits = v ?? {list:[], log:{}};
+  else if (isDay(k)) { if (v) S.days[k] = v; else delete S.days[k]; }
+}
+function partFromDoc(id, raw){
+  const v = clone(raw || {}); delete v.updated;
+  if (id === 'future') return {items:Array.isArray(v.items) ? v.items : [], del:v.del || []};
+  if (id === 'habits') return {list:v.list || [], log:v.log || {}};
+  if (SIMPLE.includes(id)) return v;
+  if (id === 'mandal') return Array.isArray(v.subs) ? {center:v.center || '', subs:v.subs} : null;
+  if (id.startsWith('diary-')) return v.days || {};
+  if (id === 'settings') { const st = {types:v.types || [], hidden:v.hidden || []}; for (const f of ['pages','widgets','pairs']) if (v[f]) st[f] = v[f]; return st; }
+  if (isDay(id) && Array.isArray(v.entries)) return {entries:v.entries, del:v.del || []};
+  return undefined;
+}
+const bodyOf = k => {
+  if (SIMPLE.includes(k)) return S[k];
+  if (k === 'mandal') return {center:M().center, subs:M().subs};
+  if (k.startsWith('diary-')) return {days:S.diary[k.slice(6)] || {}};
+  if (k === 'settings') { const st = S.settings, b = {types:st.types || [], hidden:st.hidden || []}; for (const f of ['pages','widgets','pairs']) if (st[f]) b[f] = st[f]; return b; }
+  if (k === 'future') return {items:S.future.items, del:(S.future.del || []).slice(-300)};
+  if (k === 'habits') return {list:S.habits.list, log:S.habits.log};
+  return {date:k, entries:(S.days[k]?.entries) || [], del:(S.days[k]?.del || []).slice(-300)};
+};
+const isEmptyKey = k => (isDay(k) && !(S.days[k]?.entries.length)) || (k.startsWith('diary-') && !Object.keys(S.diary[k.slice(6)] || {}).length);
+const blankMandal = () => ({center:'', subs:Array.from({length:8}, () => ({title:'', actions:Array.from({length:8}, () => ({text:'', done:false}))}))});
+const M = () => (S.mandal ||= blankMandal());
+const allKeys = () => [...Object.keys(S.days).filter(k => S.days[k].entries.length), ...(S.future.items.length ? ['future'] : []), ...(S.habits.list.length ? ['habits'] : []), ...(S.settings.types.length || S.settings.hidden?.length || S.settings.pages || S.settings.pairs ? ['settings'] : []), ...SIMPLE.filter(k => JSON.stringify(S[k]) !== JSON.stringify(blankSimple()[k])), ...(S.mandal ? ['mandal'] : []), ...Object.keys(S.diary).map(m => 'diary-' + m)];
+
+/* entry-level merge: both sides' entries survive, deletions travel as tombstones */
+function mergeList(L = [], R = [], ld = [], rd = []){
+  const del = [...new Set([...rd, ...ld])].slice(-300), dset = new Set(del), ids = new Set(L.map(x => x.id));
+  return {items:[...L, ...R.filter(x => !ids.has(x.id))].filter(x => !dset.has(x.id)), del};
+}
+function mergedPart(k, local, rem){
+  if (!rem) return local;
+  if (!local) return clone(rem);
+  if (isDay(k)) { const m = mergeList(local.entries, rem.entries, local.del, rem.del); return {entries:m.items, del:m.del}; }
+  if (k === 'future') { const m = mergeList(local.items, rem.items, local.del, rem.del); return {items:m.items, del:m.del}; }
+  return local;
+}
+
+/* ---------- sync ---------- */
+let col = null, connecting = false, retryMs = 3000, retryT = null, quotaWarned = false;
+const pending = {}, inflight = {}, remote = {}, force = new Set(), awaiting = new Set();
+const isListDoc = k => isDay(k) || k === 'future';
+/* has the account copy caught up with everything this device wrote? (other devices may have added more) */
+function covered(k, lp, rem){
+  if (!lp) return true;
+  const f = isDay(k) ? 'entries' : 'items', ids = new Set((rem?.[f] || []).map(x => x.id)), dels = new Set(rem?.del || []);
+  return (lp[f] || []).every(x => ids.has(x.id)) && (lp.del || []).every(id => dels.has(id) || !ids.has(id));
+}
+let legacyDirty = false, dirty = new Set();
+try { const d = localStorage.getItem(LSD); if (d === null) legacyDirty = true; else dirty = new Set(JSON.parse(d)); } catch(e) {}
+const saveDirty = () => { try { localStorage.setItem(LSD, JSON.stringify([...dirty])); } catch(e) {} };
+const setSync = on => { const el = document.getElementById('sync'); if (el) el.textContent = on ? (dirty.size ? '동기화 중…' : '계정에 동기화됨') : (window.claude?.use ? '이 기기에 저장 · 다시 연결 중' : '이 기기에 저장'); };
+function persist(k){ saveLocal(); dirty.add(k); awaiting.delete(k); saveDirty(); if (!col) return setSync(false); pending[k] = true; flush(k); }
+async function flush(k){
+  if (inflight[k] || !col) return; inflight[k] = true; setSync(true);
+  try {
+    while (pending[k]) {
+      pending[k] = false;
+      if (!force.has(k)) { const m = mergedPart(k, getPart(k), remote[k]); if (m !== getPart(k)) { setPart(k, m); saveLocal(); } }
+      if (isEmptyKey(k)) await col.doc(k).delete(); else await col.doc(k).set({...bodyOf(k), updated:Date.now()});
+      force.delete(k);
+    }
+    // list-like docs stay marked until a snapshot shows our entries survived a concurrent write
+    if (isListDoc(k)) awaiting.add(k); else dirty.delete(k);
+    saveDirty();
+  } catch(e) {
+    pending[k] = false;
+    if (e && e.code === 'quota_exceeded') { if (!quotaWarned) toast('저장 공간이 가득 찼어요. 오래된 기록을 지우면 다시 저장돼요.'); quotaWarned = true; }
+    else if (e && e.code === 'invalid_argument') toast('이 기록을 계정에 저장하지 못했어요. 이 기기에는 남아 있어요.');
+    scheduleRetry();
+  } finally { inflight[k] = false; setSync(!!col); }
+}
+function flushAll(){ for (const k of dirty) if (!awaiting.has(k)) { pending[k] = true; flush(k); } }
+function scheduleRetry(){
+  clearTimeout(retryT);
+  retryT = setTimeout(() => { if (col) flushAll(); else connect(); }, retryMs);
+  retryMs = Math.min(retryMs * 2, 60000);
+}
+function onSnap(snap){
+  const seen = new Set();
+  for (const doc of snap.docs) { const p = partFromDoc(doc.id, doc.data()); if (p === undefined) continue; remote[doc.id] = p; seen.add(doc.id); }
+  for (const k of Object.keys(remote)) if (!seen.has(k)) delete remote[k];
+  const local = S; S = blankS();
+  for (const k of seen) setPart(k, clone(remote[k]));
+  const toFlush = [];
+  for (const k of [...dirty]) {
+    const lp = clone(getPart(k, local));
+    if (awaiting.has(k) && !inflight[k] && !pending[k]) {
+      awaiting.delete(k);
+      if (covered(k, lp, remote[k])) { dirty.delete(k); continue; }
+    }
+    setPart(k, force.has(k) ? lp : mergedPart(k, lp, remote[k]));
+    if (!inflight[k] && !awaiting.has(k)) toFlush.push(k);
+  }
+  saveDirty(); saveLocal(); render();
+  for (const k of toFlush) { pending[k] = true; flush(k); }
+  setSync(true);
+}
+async function connect(){
+  if (col || connecting || !window.claude || !window.claude.use) return;
+  connecting = true;
+  try {
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if (!db || !user) return;
+    const id = await user.id(); if (!id) return;
+    const c = db.collection('data/users/' + id);
+    const first = await c.get();
+    const have = new Set(first.docs.map(d => d.id));
+    // first sync ever, or the first run of this version: send up what only this device has
+    if (first.empty || legacyDirty) { for (const k of allKeys()) if (!have.has(k)) dirty.add(k); legacyDirty = false; saveDirty(); }
+    col = c; retryMs = 3000; setSync(true);
+    c.onSnapshot(onSnap, err => {
+      col = null; setSync(false);
+      if (!['revoked','not_granted','capability_disabled','capability_removed'].includes(err && err.code)) scheduleRetry();
+    });
+  } catch(e) { col = null; scheduleRetry(); }
+  finally { connecting = false; }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !col) { retryMs = 3000; connect(); } });
+window.addEventListener('online', () => { if (!col) connect(); else flushAll(); });
+
+/* ---------- state & helpers ---------- */
+let mfocus = -1, dmd = todayKey().slice(5), dyear = Number(todayKey().slice(0,4));
+let tab = 'daily', cur = todayKey(), month = cur.slice(0,7), fstart = cur.slice(0,7), hmonth = cur.slice(0,7), type = 'task', pri = false;
+const dayOf = k => (S.days[k] ||= {entries:[]});
+const find = (k,id) => (S.days[k]?.entries || []).find(e => e.id === id);
+const fitem = id => S.future.items.find(x => x.id === id);
+function addEntry(k, e){ dayOf(k).entries.push(e); persist(k); }
+function migrate(from, id, to){
+  const e = find(from, id); if (!e || from === to) return;
+  addEntry(to, {id:uid(), type:e.type, text:e.text, state:'open', pri:e.pri, from, ...extra(e)});
+  e.state = 'migrated'; persist(from);
+}
+function openTasks(){
+  const t = todayKey(), out = [];
+  for (const k of Object.keys(S.days).sort()) if (k < t) for (const e of S.days[k].entries) if (e.type === 'task' && e.state === 'open') out.push([k, e]);
+  return out;
+}
+function parse(text, ty, p){
+  for (let i = 0; i < 3; i++) {
+    if (/^\*\s*/.test(text)) { p = true; text = text.replace(/^\*\s*/, ''); }
+    else if (/^-\s+/.test(text)) { ty = 'note'; text = text.replace(/^-\s+/, ''); }
+    else if (/^[oO○]\s+/.test(text)) { ty = 'event'; text = text.replace(/^[oO○]\s+/, ''); }
+    else if (/^!\s+/.test(text)) { ty = 'idea'; text = text.replace(/^!\s+/, ''); }
+    else if (/^\?\s+/.test(text)) { ty = 'question'; text = text.replace(/^\?\s+/, ''); }
+    else { const c = (S.settings?.types || []).find(t => text.startsWith(t.sym + ' ')); if (c) { ty = c.id; text = text.slice(c.sym.length).trimStart(); } }
+  }
+  return {text:text.trim(), type:ty, pri:p};
+}
+const habOn = (hid, k) => (S.habits.log[k] || []).includes(hid);
+function habToggle(hid, k){
+  const arr = S.habits.log[k] || [];
+  S.habits.log[k] = arr.includes(hid) ? arr.filter(x => x !== hid) : [...arr, hid];
+  if (!S.habits.log[k].length) delete S.habits.log[k];
+  persist('habits');
+}
+function streak(hid){
+  let k = todayKey(), n = 0;
+  if (!habOn(hid, k)) k = addDays(k, -1);
+  while (habOn(hid, k)) { n++; k = addDays(k, -1); }
+  return n;
+}
+function monthRate(hid, m){
+  const t = todayKey(), n = daysIn(m); let done = 0, total = 0;
+  for (let i = 1; i <= n; i++) { const k = `${m}-${pad(i)}`; if (k > t) break; total++; if (habOn(hid, k)) done++; }
+  return {done, total, pct: total ? Math.round(done / total * 100) : 0};
+}
+function taskStats(keys){
+  let tasks = 0, done = 0, evs = 0;
+  for (const k of keys) for (const e of S.days[k]?.entries || []) {
+    if (e.type === 'event' && e.state !== 'cancelled') evs++;
+    if (e.type === 'task' && e.state !== 'migrated' && e.state !== 'cancelled') { tasks++; if (e.state === 'done') done++; }
+  }
+  return {tasks, done, evs};
+}
+const monthKeys = m => Array.from({length:daysIn(m)}, (_, i) => `${m}-${pad(i+1)}`);
+
+/* ---------- pieces ---------- */
+function entryHTML(k, e, opts = {}){
+  const s = sigOf(e);
+  const canToggle = togg(e) && (e.state === 'open' || e.state === 'done');
+  const label = e.state === 'done' ? '완료 취소' : '완료로 표시';
+  const from = e.to ? `${e.to} 리스트로 보냄` : e.from === 'future' ? '퓨처로그에서 옴' : e.from ? `${short(e.from)}에서 이월` : '';
+  return `<li class="entry ${e.type} ${e.state} ${opts.mig || opts.past ? 'withmig' : ''}" data-k="${k}" data-id="${e.id}">
+    <span class="p">${e.pri ? '*' : ''}</span>
+    <button class="sig" data-act="${opts.future ? 'ftoggle' : 'toggle'}" ${canToggle ? `aria-label="${label}"` : 'disabled aria-hidden="true"'}>${s}</button>
+    <span class="txt">${esc(e.text)}${from ? `<span class="from">${from}</span>` : ''}</span>
+    ${opts.past ? `<span style="display:flex"><button class="mig" data-act="mig-today">오늘로</button><button class="mig" data-act="release" style="color:var(--muted)">놓아주기</button></span>` : opts.mig ? `<button class="mig" data-act="mig-today">오늘로 &gt;</button>` : `<button class="more" data-act="${opts.future ? 'fmore' : 'more'}" aria-label="더보기">···</button>`}
+  </li>`;
+}
+function calHTML(m, big){
+  const first = dateOf(m+'-01').getDay(), n = daysIn(m), t = todayKey();
+  let h = `<div class="cal ${big ? 'big' : 'mini'}">` + WD.map((w,i) => `<div class="wd ${i===0?'sun':i===6?'sat':''}">${w}</div>`).join('');
+  for (let i = 0; i < first; i++) h += '<div class="cell blank"></div>';
+  for (let i = 1; i <= n; i++) {
+    const k = `${m}-${pad(i)}`, es = S.days[k]?.entries || [], dow = (first + i - 1) % 7;
+    const cls = `cell ${k===t?'today':''} ${k===cur?'sel':''} ${es.length?'has':''}`;
+    if (!big) { h += `<button class="${cls}" data-act="goto" data-k="${k}" aria-label="${short(k)}">${i}</button>`; continue; }
+    const evs = es.filter(e => e.type === 'event' && e.state !== 'cancelled');
+    const tasks = es.filter(e => e.type === 'task' && e.state !== 'migrated' && e.state !== 'cancelled'), done = tasks.filter(e => e.state === 'done').length;
+    const lines = evs.slice(0,2).map(e => `<span class="line ev">${esc(e.text)}</span>`).join('');
+    h += `<button class="${cls}" data-act="goto" data-k="${k}" aria-label="${short(k)}"><span class="n ${dow===0?'sun':dow===6?'sat':''}">${i}</span>${lines}${tasks.length - done ? `<small>• ${tasks.length - done}</small>` : ''}</button>`;
+  }
+  const rest = (7 - (first + n) % 7) % 7;
+  for (let i = 0; i < rest; i++) h += '<div class="cell blank"></div>';
+  return h + '</div>';
+}
+function habitChips(k){
+  if (!S.habits.list.length) return '';
+  return `<div class="chips">${S.habits.list.map(h => { const on = habOn(h.id,k); return `<button class="chip ${on?'on':''}" data-act="hab" data-h="${h.id}" data-k="${k}" aria-pressed="${on}">${on?'✓ ':''}${esc(h.name)}</button>`; }).join('')}</div>`;
+}
+function futureList(m){
+  const items = S.future.items.filter(x => x.month === m);
+  return items.length ? `<ul class="entries">${items.map(x => entryHTML(m, x, {future:true})).join('')}</ul>` : '';
+}
+function fbox(m){
+  const n = S.future.items.filter(x => x.month === m).length;
+  return `<section class="fbox"><h3>${monthLabel(m)}<small>${n ? `${n}개` : ''}</small></h3>${futureList(m)}
+    <form class="row" data-fm="${m}"><input class="field" id="fin-${m}" placeholder="+ ${Number(m.slice(5))}월 계획" maxlength="200" aria-label="${monthLabel(m)} 계획 추가"><button class="btn sm ghost">추가</button></form></section>`;
+}
+const addHabitForm = () => {
+  const suggest = ['물 2L','운동 30분','독서 20쪽','일기 쓰기','12시 전 취침'].filter(s => !S.habits.list.some(h => h.name === s));
+  return `<div style="display:flex;flex-direction:column;gap:10px"><form class="row" id="habForm"><input class="field" id="habIn" placeholder="새 습관 (예: 물 2L 마시기)" maxlength="40" aria-label="새 습관 이름"><button class="btn">추가</button></form>
+    ${suggest.length ? `<div class="suggest">${suggest.map(s => `<button class="chip" data-act="hadd" data-name="${esc(s)}">+ ${esc(s)}</button>`).join('')}</div>` : ''}</div>`;
+};
+
+/* ---------- pages you can assemble ---------- */
+const PAGES = [
+  {id:'index', name:'인덱스', desc:'저널 목차, 중요 표시한 기록 모아보기'},
+  {id:'daily', name:'데일리', desc:'오늘 할 일·일정·메모'},
+  {id:'diary', name:'만년다이어리', desc:'같은 날짜를 해마다 한 줄씩'},
+  {id:'weekly', name:'위클리', desc:'한 주를 한눈에'},
+  {id:'monthly', name:'먼슬리', desc:'한 달 달력'},
+  {id:'future', name:'퓨처로그', desc:'몇 달 앞 계획'},
+  {id:'habits', name:'습관', desc:'생각날 때 체크'},
+  {id:'mood', name:'기분', desc:'하루 기분을 동그라미로'},
+  {id:'mandal', name:'만다라트', desc:'핵심 목표 1 + 세부 목표 8'},
+  {id:'lists', name:'리스트', desc:'읽을 책, 위시리스트 같은 목록'},
+  {id:'review', name:'회고', desc:'한 달을 돌아보는 세 칸'},
+  {id:'dump', name:'브레인 덤프', desc:'날짜 없이 자유롭게 쏟아내기'},
+  {id:'search', name:'검색', desc:'적어 둔 모든 기록 찾기'}
+];
+const WIDGETS = [
+  {id:'diary', name:'만년다이어리 한 줄'},
+  {id:'mood', name:'오늘 기분'},
+  {id:'habits', name:'습관 체크'}
+];
+const pname = id => PAGES.find(p => p.id === id)?.name || id;
+function pageList(){
+  const saved = S.settings.pages;
+  if (saved) { const ids = saved.map(p => p.id); return [...(ids.includes('index') ? [] : [{id:'index', on:true}]), ...saved.filter(p => PAGES.some(x => x.id === p.id)), ...PAGES.filter(p => p.id !== 'index' && !ids.includes(p.id)).map(p => ({id:p.id, on:false}))]; }
+  const has = {index:1, daily:1, diary:1, monthly:1, future:S.future.items.length, habits:S.habits.list.length, mandal:!!S.mandal};
+  return PAGES.map(p => ({id:p.id, on:!!has[p.id]}));
+}
+function widgetList(){
+  const saved = S.settings.widgets;
+  if (saved) { const ids = saved.map(w => w.id); return [...saved.filter(w => WIDGETS.some(x => x.id === w.id)), ...WIDGETS.filter(w => !ids.includes(w.id)).map(w => ({id:w.id, on:false}))]; }
+  return WIDGETS.map(w => ({id:w.id, on:w.id === 'diary'}));
+}
+const enabled = () => pageList().filter(p => p.on).map(p => p.id);
+const tabListEl = document.getElementById('tabList');
+function renderTabs(){
+  const on = enabled();
+  tabListEl.innerHTML = on.map(id => `<button class="tab" role="tab" data-tab="${id}" aria-selected="${id === tab}">${pname(id)}</button>`).join('');
+  const sel = tabListEl.querySelector('[aria-selected="true"]');
+  if (sel) { const l = sel.offsetLeft, r = l + sel.offsetWidth; if (l < tabListEl.scrollLeft || r > tabListEl.scrollLeft + tabListEl.clientWidth) tabListEl.scrollLeft = l - 8; }
+}
+let showPast = false, showLegend = false;
+const trunc = (s, n) => s.length > n ? s.slice(0, n) + '…' : s;
+function diaryLine(k){
+  const md = k.slice(5), y = k.slice(0,4), recs = diaryOf(md), others = Object.keys(recs).filter(x => x !== y).sort().reverse();
+  return `<div class="panel"><h4>만년다이어리 · 한 줄<button data-act="dgo" data-md="${md}" data-y="${y}" data-tab="diary">모아보기</button></h4>
+    <textarea id="dTxt-${md}-${y}" class="field dtxt short" maxlength="2000" placeholder="쓰고 싶을 때만, 한 줄이면 충분해요" aria-label="${y}년 ${Number(md.slice(0,2))}월 ${Number(md.slice(3))}일 한 줄">${esc(recs[y] || '')}</textarea>
+    ${others.map(o => `<p class="muted" style="margin:8px 0 0"><b style="color:var(--ink)">${o}</b> ${esc(trunc(recs[o], 60))}</p>`).join('')}</div>`;
+}
+
+/* ---------- views: each returns page A, page B (detail only), and footers ---------- */
+function vDaily(){
+  const d = dateOf(cur), list = S.days[cur]?.entries || [], t = todayKey(), isToday = cur === t;
+  const rel = isToday ? '오늘' : cur === addDays(t,-1) ? '어제' : cur === addDays(t,1) ? '내일' : `${d.getMonth()+1}월`;
+  let a = `<div class="phead"><div class="dayhead">
+    <span class="num">${d.getDate()}</span>
+    <div class="meta"><span>${WD[d.getDay()]}요일 · ${rel}</span><span>${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}</span></div>
+    ${isToday ? '' : '<button class="pill" data-act="today">오늘</button>'}
+    <div class="nav"><button class="iconbtn" data-act="prev" aria-label="이전 날">‹</button><button class="iconbtn" data-act="next" aria-label="다음 날">›</button></div>
+  </div></div>`;
+  if (list.length) a += `<ul class="entries">${list.map(e => entryHTML(cur, e)).join('')}</ul>`;
+  else a += `<p class="quiet">${isToday ? '아래에 편하게 적어 보세요.' : '이 날은 비어 있어요.'} <button class="link" data-act="legend">기호 설명 ${showLegend ? '닫기' : '보기'}</button></p>`;
+  if (!list.length && showLegend) a += `<div class="empty"><dl class="legend"><dt>•</dt><dd>할 일 · 눌러서 완료 ×</dd><dt>○</dt><dd>일정</dd><dt>–</dt><dd>메모</dd><dt>!</dt><dd>아이디어 · 영감</dd><dt>?</dt><dd>알아볼 것</dd><dt>♡</dt><dd>감사한 일</dd><dt>&gt;</dt><dd>다른 날로 옮김</dd><dt>&lt;</dt><dd>퓨처로그로 보냄</dd><dt>*</dt><dd>중요</dd>${(S.settings.types || []).map(t => `<dt>${esc(t.sym)}</dt><dd>${esc(t.name)}</dd>`).join('')}</dl>
+    ${Object.keys(S.days).length ? '' : '<button class="btn ghost" data-act="sample">예시 항목 넣어보기</button>'}</div>`;
+  const opens = isToday ? openTasks() : [];
+  if (opens.length) {
+    a += `<div class="past"><button class="link" data-act="past">지난 할 일 ${opens.length}개 ${showPast ? '접기' : '보기'}</button>`;
+    if (showPast) {
+      let last = '';
+      for (const [k, e] of opens) { if (k !== last) { a += `${last ? '</ul>' : ''}<div class="section-title">${short(k)}</div><ul class="entries">`; last = k; } a += entryHTML(k, e, {past:true}); }
+      a += `</ul><div class="row" style="margin-top:10px"><button class="btn sm ghost" data-act="release-all">이제 안 해도 돼 · 모두 놓아주기</button><button class="btn sm ghost" data-act="mig-all">모두 오늘로</button></div>`;
+    }
+    a += '</div>';
+  }
+  const wl = dailyWidgets(cur);
+  if (!spread) a += wl;
+  const m = cur.slice(0,7);
+  const b = `<div class="phead"><div class="bar"><h2>${monthLabel(m)}</h2><button class="pill" data-act="tomonth" data-m="${m}">먼슬리</button></div></div>
+    ${calHTML(m, false)}${spread ? wl : ''}`;
+  return {a, b: spread ? b : '', fa:'오늘 기록', fb:'이 달'};
+}
+
+function vMonthly(){
+  const t = todayKey(), n = daysIn(month);
+  const head = `<div class="phead"><div class="bar"><button class="iconbtn" data-act="mprev" aria-label="이전 달">‹</button><h2>${monthLabel(month)}</h2><button class="iconbtn" data-act="mnext" aria-label="다음 달">›</button></div></div>`;
+  const plans = futureList(month);
+  const b = `<div class="phead"><div class="bar"><h2>이 달 계획</h2><button class="pill" data-act="tab" data-t="future">퓨처로그</button></div></div>
+    ${plans || '<p class="quiet">퓨처로그에 적은 이 달 계획이 여기 보여요.</p>'}`;
+  if (detail) return {a: head + calHTML(month, true), b, fa:'먼슬리', fb:'이 달 계획'};
+  let rows = '';
+  for (let i = 1; i <= n; i++) {
+    const k = `${month}-${pad(i)}`, dow = dateOf(k).getDay(), es = S.days[k]?.entries || [];
+    const evs = es.filter(e => e.type === 'event' && e.state !== 'cancelled').map(e => esc(e.text));
+    const nt = es.filter(e => e.type === 'task' && e.state === 'open').length;
+    const summary = (evs.length ? `<span class="ev">○ ${evs.slice(0,2).join(', ')}${evs.length > 2 ? ` 외 ${evs.length-2}` : ''}</span>` : '') + (nt ? `<small>할 일 ${nt}개</small>` : '');
+    rows += `<button class="mday ${k === t ? 'today' : ''}" data-act="goto" data-k="${k}"><span class="d ${dow===0?'sun':dow===6?'sat':''}">${pad(i)} ${WD[dow]}</span><span class="s">${summary}</span></button>`;
+  }
+  return {a: head + (plans ? `<div class="section-title">이 달 계획</div>${plans}<div class="section-title">날짜별</div>` : '') + rows, b:'', fa:'먼슬리'};
+}
+
+function vFuture(){
+  const months = Array.from({length:6}, (_, i) => addMonths(fstart, i));
+  const range = `${Number(months[0].slice(5))}월 – ${Number(months[5].slice(5))}월`;
+  const head = `<div class="phead"><div class="bar"><button class="iconbtn" data-act="fprev" aria-label="이전 6개월">‹</button><h2>${range}</h2><button class="iconbtn" data-act="fnext" aria-label="다음 6개월">›</button></div></div>`;
+  if (spread) return {a: head + `<div class="fgrid">${months.slice(0,3).map(fbox).join('')}</div>`,
+    b: `<div class="phead"><div class="bar"><h2 style="color:var(--muted);font-weight:500;font-size:15px">이어서</h2></div></div><div class="fgrid">${months.slice(3).map(fbox).join('')}</div>`, fa:'퓨처로그', fb:'퓨처로그'};
+  return {a: head + `<div class="fgrid ${detail ? 'two' : ''}">${months.map(fbox).join('')}</div>`, b:'', fa:'퓨처로그'};
+}
+
+function vHabits(){
+  const t = todayKey(), list = S.habits.list;
+  const note = '<p class="quiet">빠진 날은 그냥 쉬어 간 날이에요. 생각날 때 체크만 해요.</p>';
+  if (!list.length) return {a:`<div class="phead"><div class="bar"><h2>습관</h2></div></div><div class="empty"><p>가볍게 챙기고 싶은 습관을 추가해 보세요.</p>${addHabitForm()}</div>`, b:'', fa:'습관'};
+  const b = `<div class="phead"><div class="bar"><h2>습관 추가</h2></div></div><div class="panel">${addHabitForm()}</div>${note}`;
+  if (detail) {
+    const n = daysIn(hmonth);
+    let th = '<th class="name">습관</th>';
+    for (let i = 1; i <= n; i++) { const k = `${hmonth}-${pad(i)}`, dow = dateOf(k).getDay(); th += `<th class="${k===t?'today':''} ${dow===0?'sun':dow===6?'sat':''}">${i}<br>${WD[dow]}</th>`; }
+    const rows = list.map(h => {
+      let tds = '';
+      for (let i = 1; i <= n; i++) { const k = `${hmonth}-${pad(i)}`, on = habOn(h.id, k);
+        tds += k > t ? '<td></td>' : `<td><button class="${on?'on':''}" data-act="hab" data-h="${h.id}" data-k="${k}" aria-label="${esc(h.name)} ${short(k)}" aria-pressed="${on}"><i></i></button></td>`; }
+      return `<tr><th class="name">${esc(h.name)}<br><button class="xbtn" data-act="hdel" data-h="${h.id}">삭제</button></th>${tds}</tr>`;
+    }).join('');
+    return {a:`<div class="phead"><div class="bar"><button class="iconbtn" data-act="hprev" aria-label="이전 달">‹</button><h2>${monthLabel(hmonth)}</h2><button class="iconbtn" data-act="hnext" aria-label="다음 달">›</button></div></div>
+      <div class="tablewrap"><table class="ht"><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table></div>`, b, fa:'습관', fb:'습관 추가'};
+  }
+  const cards = list.map(h => {
+    let dots = '';
+    for (let i = 6; i >= 0; i--) { const k = addDays(t, -i), on = habOn(h.id, k), d = dateOf(k);
+      dots += `<button class="dot ${on?'on':''} ${k===t?'today':''}" data-act="hab" data-h="${h.id}" data-k="${k}" aria-pressed="${on}" aria-label="${esc(h.name)} ${short(k)}"><span>${on?'✓':d.getDate()}</span>${k===t?'오늘':WD[d.getDay()]}</button>`; }
+    return `<div class="hcard"><div class="htop"><b>${esc(h.name)}</b><small><button class="xbtn" data-act="hdel" data-h="${h.id}">삭제</button></small></div><div class="week">${dots}</div></div>`;
+  }).join('');
+  return {a:`<div class="phead"><div class="bar"><h2>습관</h2></div></div>${cards}${note}<div class="section-title">습관 추가</div>${addHabitForm()}`, b:'', fa:'습관'};
+}
+
+/* ---------- mandalart ---------- */
+const POS = [0,1,2,3,5,6,7,8];
+const mcell = (label, cls, attrs, ph) => `<button class="mc ${cls}" ${attrs}>${label ? esc(label) : `<span class="ph">${ph}</span>`}</button>`;
+function grid3(kind, si, solo){
+  const m = M(); let h = `<div class="m3 ${solo ? 'solo' : ''}">`;
+  for (let p = 0; p < 9; p++) {
+    if (p === 4) { h += kind === 'core' ? mcell(m.center, 'core', 'data-act="medit" data-w="c"', '핵심 목표') : mcell(m.subs[si].title, 'subt', `data-act="medit" data-w="s" data-i="${si}"`, `목표 ${si+1}`); continue; }
+    const i = POS[POS.indexOf(p)] === p ? POS.indexOf(p) : 0;
+    if (kind === 'core') h += mcell(m.subs[i].title, 'subt', `data-act="${solo ? 'mfocus' : 'medit'}" data-w="s" data-i="${i}"`, `목표 ${i+1}`);
+    else { const a = m.subs[si].actions[i]; h += mcell(a.text, a.done ? 'done' : '', `data-act="medit" data-w="a" data-i="${si}" data-j="${i}"`, '실천'); }
+  }
+  return h + '</div>';
+}
+function subProgress(s){ const n = s.actions.filter(a => a.text).length, d = s.actions.filter(a => a.text && a.done).length; return {n, d}; }
+function vMandal(){
+  const m = M();
+  const progress = m.subs.map((s, i) => { const {n, d} = subProgress(s); return `<div class="prog"><div><button data-act="mfocus" data-i="${i}" style="text-align:left;font-weight:700">${s.title ? esc(s.title) : `<span style="color:var(--faint);font-weight:400">목표 ${i+1}</span>`}</button><span style="color:var(--faint)">›</span></div></div>`; }).join('');
+  const hint = '<p class="muted" style="font-size:13px;margin:10px 0 0">칸을 눌러 적어요. 실천 칸은 다시 눌러 완료(×)로 표시할 수 있어요. 다 채우지 않아도 괜찮아요.</p>';
+  if (detail) {
+    let g = '<div class="m9">';
+    for (let p = 0; p < 9; p++) g += p === 4 ? grid3('core', 0, false) : grid3('sub', POS.indexOf(p), false);
+    g += '</div>';
+    return {a:`<div class="phead"><div class="bar"><h2>만다라트</h2><span style="color:var(--muted);font-size:13px">${m.center ? esc(m.center) : '핵심 목표를 가운데에'}</span></div></div>${g}${hint}`,
+      b:`<div class="phead"><div class="bar"><h2>세부 목표</h2></div></div><div class="panel">${progress}</div>`, fa:'만다라트', fb:'세부 목표'};
+  }
+  if (mfocus >= 0) {
+    const s = m.subs[mfocus];
+    return {a:`<div class="phead"><div class="bar"><button class="iconbtn" data-act="mback" aria-label="전체 목표로">‹</button><h2 style="flex:1">${s.title ? esc(s.title) : `목표 ${mfocus+1}`}</h2></div></div>${grid3('sub', mfocus, true)}${hint}`, b:'', fa:'만다라트'};
+  }
+  return {a:`<div class="phead"><div class="bar"><h2>만다라트</h2></div></div>${grid3('core', 0, true)}<p class="muted" style="font-size:13px;margin:10px 0 0">가운데에 핵심 목표, 둘레에 세부 목표 8개를 적어요. 세부 목표를 누르면 실천 8칸이 열려요.</p><div class="panel">${progress}</div>`, b:'', fa:'만다라트'};
+}
+function openMandalSheet(w, i, j){
+  const m = M(), a = w === 'a' ? m.subs[i].actions[j] : null;
+  const val = w === 'c' ? m.center : w === 's' ? m.subs[i].title : a.text;
+  const label = w === 'c' ? '핵심 목표' : w === 's' ? `세부 목표 ${i+1}` : `${m.subs[i].title || `목표 ${i+1}`} · 실천 ${j+1}`;
+  root.innerHTML = `<div class="scrim" data-s="close"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(label)}"><div class="in"><div class="grab"></div>
+    <div class="section-title" style="margin:0">${esc(label)}</div>
+    <div class="row"><input id="mText" class="field" maxlength="40" value="${esc(val)}" placeholder="${w === 'a' ? '예: 아침 스트레칭 10분' : w === 's' ? '예: 체력 기르기' : '예: 건강하고 단단한 한 해'}" aria-label="${esc(label)}"><button class="btn" data-s="save">저장</button></div>
+    ${a && a.text ? `<div class="acts"><button class="act" data-s="done">${a.done ? '완료 취소' : '× 완료'}</button><button class="act danger" data-s="clear">칸 비우기</button></div>` : ''}
+    ${w === 's' && !detail ? `<button class="act" data-s="open">실천 8칸 열기</button>` : ''}
+  </div></div>`;
+  root.hidden = false;
+  const inp = root.querySelector('#mText'); inp.focus();
+  inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') root.querySelector('[data-s="save"]').click(); });
+  root.onclick = ev => {
+    const b = ev.target.closest('[data-s]'); if (!b) return;
+    const s = b.dataset.s;
+    if (s === 'close') return closeSheet();
+    if (s === 'save' || s === 'open') { const v = inp.value.trim(); if (w === 'c') m.center = v; else if (w === 's') m.subs[i].title = v; else { a.text = v; if (!v) a.done = false; } }
+    if (s === 'open') mfocus = i;
+    if (s === 'done') a.done = !a.done;
+    if (s === 'clear') { a.text = ''; a.done = false; }
+    persist('mandal'); closeSheet(); render();
+  };
+}
+
+/* ---------- perpetual diary ---------- */
+const mdShift = (md, n) => addDays('2024-' + md, n).slice(5);
+function setDiary(md, y, text){
+  const [mm, dd] = md.split('-'), mo = (S.diary[mm] ||= {}), d = (mo[dd] ||= {});
+  if (text.trim()) d[y] = text; else delete d[y];
+  if (!Object.keys(d).length) delete mo[dd];
+  if (!Object.keys(mo).length) delete S.diary[mm];
+  persist('diary-' + mm);
+}
+const diaryOf = md => { const [mm, dd] = md.split('-'); return S.diary[mm]?.[dd] || {}; };
+function diaryPanel(k){
+  const md = k.slice(5), y = k.slice(0,4), recs = diaryOf(md), others = Object.keys(recs).filter(x => x !== y).sort().reverse();
+  const mine = recs[y];
+  return `<div class="panel"><h4>만년다이어리 · ${Number(md.slice(0,2))}월 ${Number(md.slice(3))}일<button data-act="dgo" data-md="${md}" data-y="${y}" data-tab="diary">${mine ? '열기' : '한 줄 쓰기'}</button></h4>
+    ${mine ? `<p style="margin:0 0 6px;white-space:pre-wrap;font-size:14px">${esc(mine.length > 80 ? mine.slice(0,80) + '…' : mine)}</p>` : ''}
+    ${others.length ? others.map(o => `<p class="muted" style="margin:4px 0 0"><b style="color:var(--ink)">${o}</b> ${esc(recs[o].length > 50 ? recs[o].slice(0,50) + '…' : recs[o])}</p>`).join('') : (mine ? '' : '<p class="muted">쓰고 싶은 날만 적어요. 내년 이 날 다시 보여요.</p>')}</div>`;
+}
+function vDiary(){
+  const [mm, dd] = dmd.split('-'), ty = Number(todayKey().slice(0,4)), recs = diaryOf(dmd);
+  const others = Object.keys(recs).filter(y => y !== String(dyear)).sort().reverse();
+  const isToday = dmd === todayKey().slice(5);
+  const head = `<div class="phead"><div class="bar"><button class="iconbtn" data-act="dprev" aria-label="전날">‹</button>
+    <div style="text-align:center;min-width:0"><h2>${Number(mm)}월 ${Number(dd)}일</h2><span style="font-size:12px;color:var(--muted)">${isToday ? '오늘 · ' : ''}쓰고 싶은 날만 써요</span></div>
+    <button class="iconbtn" data-act="dnext" aria-label="다음날">›</button></div></div>`;
+  const editor = `<div class="dy"><div class="dyh"><span style="display:flex;align-items:center;gap:4px"><button class="iconbtn" data-act="dyprev" aria-label="이전 해" style="width:30px;height:30px;font-size:18px">‹</button><b>${dyear}</b><button class="iconbtn" data-act="dynext" aria-label="다음 해" style="width:30px;height:30px;font-size:18px">›</button></span>
+    <span style="font-size:12px;color:var(--muted)" id="dSaved">${dyear === ty ? '올해' : `${ty - dyear > 0 ? `${ty - dyear}년 전` : `${dyear - ty}년 뒤`}`} · 적으면 자동 저장</span></div>
+    <textarea id="dTxt-${dmd}-${dyear}" class="field dtxt" maxlength="2000" placeholder="이 날의 일, 기분, 한 줄이면 충분해요" aria-label="${dyear}년 ${Number(mm)}월 ${Number(dd)}일 기록">${esc(recs[dyear] || '')}</textarea></div>`;
+  const past = others.length ? `<div class="section-title">다른 해의 ${Number(mm)}월 ${Number(dd)}일</div>${others.map(y => `<button class="dyr" data-act="dyear" data-y="${y}"><b>${y}</b><span>${esc(recs[y])}</span></button>`).join('')}`
+    : `<p class="muted" style="font-size:14px;margin-top:14px">다른 해의 같은 날 기록이 생기면 여기에 나란히 보여요.</p>`;
+  const n = daysIn('2024-' + mm), first = dateOf(`${dyear}-${mm}-01`).getDay();
+  let cal = '<div class="cal mini">' + WD.map((w,i) => `<div class="wd ${i===0?'sun':i===6?'sat':''}">${w}</div>`).join('') + '<div class="cell blank"></div>'.repeat(first);
+  for (let i = 1; i <= n; i++) { const md = `${mm}-${pad(i)}`, has = Object.keys(diaryOf(md)).length; cal += `<button class="cell ${md === dmd ? 'sel' : ''} ${has ? 'has' : ''} ${md === todayKey().slice(5) ? 'today' : ''}" data-act="dgo" data-md="${md}" aria-label="${Number(mm)}월 ${i}일">${i}</button>`; }
+  cal += '</div>';
+  const written = Object.keys(S.diary[mm] || {}).length;
+  const b = `<div class="phead"><div class="bar"><button class="iconbtn" data-act="dmprev" aria-label="이전 달">‹</button><h2>${Number(mm)}월</h2><button class="iconbtn" data-act="dmnext" aria-label="다음 달">›</button></div></div>
+    ${cal}<div class="panel"><p class="muted">점이 있는 날은 어느 해든 기록이 있는 날이에요. 빈 날은 그냥 빈 날이에요.</p></div>`;
+  return {a: head + editor + past, b, fa:'만년다이어리', fb:`${Number(mm)}월 모아보기`};
+}
+let dT;
+book.addEventListener('input', e => {
+  const t = e.target, mt = t.id && t.id.match(/^dTxt-(\d\d-\d\d)-(\d{4})$/); if (!mt) return;
+  const s = document.getElementById('dSaved'); if (s) s.textContent = '저장 중…';
+  clearTimeout(dT); dT = setTimeout(() => { setDiary(mt[1], mt[2], t.value); const s2 = document.getElementById('dSaved'); if (s2) s2.textContent = '저장됨'; }, 600);
+});
+
+/* ---------- daily widgets ---------- */
+const MOODS = [{v:5,n:'좋음'},{v:4,n:'괜찮음'},{v:3,n:'보통'},{v:2,n:'별로'},{v:1,n:'힘듦'}];
+const mdot = (v, big) => `<span class="mdot ${big ? 'big' : ''}" style="--f:${v ? (v - 1) / 4 : 0}" aria-hidden="true"></span>`;
+function moodPicker(k){
+  const cur_ = S.mood[k];
+  return `<div class="moodrow">${MOODS.map(m => `<button class="mbtn" data-act="mood" data-k="${k}" data-v="${m.v}" aria-pressed="${cur_ === m.v}">${mdot(m.v, true)}<span>${m.n}</span></button>`).join('')}</div>`;
+}
+function dailyWidgets(k){
+  return widgetList().filter(w => w.on).map(w => {
+    if (w.id === 'diary') return diaryLine(k);
+    if (w.id === 'mood') return `<div class="panel"><h4>기분</h4>${moodPicker(k)}</div>`;
+    if (w.id === 'habits') return `<div class="panel"><h4>습관<button data-act="tab" data-t="habits">관리</button></h4>${S.habits.list.length ? habitChips(k) : '<p class="muted">습관 페이지에서 습관을 추가하면 여기서 체크할 수 있어요.</p>'}</div>`;
+    return '';
+  }).join('');
+}
+
+/* ---------- weekly ---------- */
+function vWeekly(){
+  const dow = (dateOf(cur).getDay() + 6) % 7, start = addDays(cur, -dow), t = todayKey();
+  const days = Array.from({length:7}, (_, i) => addDays(start, i));
+  const end = dateOf(days[6]);
+  const head = `<div class="phead"><div class="bar"><button class="iconbtn" data-act="wprev" aria-label="지난주">‹</button><h2>${short(days[0])} – ${end.getMonth()+1}/${end.getDate()}</h2><button class="iconbtn" data-act="wnext" aria-label="다음 주">›</button></div></div>`;
+  const dayBlock = k => {
+    const es = (S.days[k]?.entries || []).filter(e => e.state !== 'migrated' && e.state !== 'released');
+    const d = dateOf(k), dw = d.getDay();
+    return `<section class="wday ${k === t ? 'today' : ''}"><div class="whrow"><button class="wh" data-act="goto" data-k="${k}"><b class="${dw===0?'sun':dw===6?'sat':''}">${d.getDate()} ${WD[dw]}</b>${k === t ? '<span>오늘</span>' : ''}</button><button class="iconbtn sm" data-act="qadd" data-k="${k}" aria-label="${short(k)}에 기록하기">＋</button></div>
+      ${es.length ? `<ul class="wl">${es.map(e => `<li class="${e.state}"><i>${esc(sigOf(e))}</i>${esc(e.text)}</li>`).join('')}</ul>` : ''}</section>`;
+  };
+  if (spread) return {a: head + days.slice(0,4).map(dayBlock).join(''), b: `<div class="phead"><div class="bar"><h2 style="font-size:15px;color:var(--muted);font-weight:500">이어서</h2></div></div>` + days.slice(4).map(dayBlock).join(''), fa:'위클리', fb:'위클리'};
+  return {a: head + days.map(dayBlock).join('') + '<p class="quiet">날짜를 누르면 그날 데일리로 가요.</p>', b:'', fa:'위클리'};
+}
+
+/* ---------- mood ---------- */
+let moodMonth = todayKey().slice(0,7);
+function vMood(){
+  const t = todayKey(), first = dateOf(moodMonth + '-01').getDay(), n = daysIn(moodMonth);
+  let cal = '<div class="cal moodcal">' + WD.map((w,i) => `<div class="wd ${i===0?'sun':i===6?'sat':''}">${w}</div>`).join('') + '<div class="cell blank"></div>'.repeat(first);
+  for (let i = 1; i <= n; i++) { const k = `${moodMonth}-${pad(i)}`, v = S.mood[k];
+    cal += `<button class="cell ${k === t ? 'today' : ''}" data-act="moodday" data-k="${k}" aria-label="${short(k)} ${v ? MOODS.find(m => m.v === v).n : '기록 없음'}"><span class="n">${i}</span>${v ? mdot(v) : ''}</button>`; }
+  cal += '</div>';
+  const head = `<div class="phead"><div class="bar"><button class="iconbtn" data-act="moprev" aria-label="이전 달">‹</button><h2>${monthLabel(moodMonth)}</h2><button class="iconbtn" data-act="monext" aria-label="다음 달">›</button></div></div>`;
+  const legend = `<div class="moodlegend">${MOODS.map(m => `<span>${mdot(m.v)}${m.n}</span>`).join('')}</div>`;
+  const todayBox = `<div class="panel"><h4>오늘 기분</h4>${moodPicker(t)}</div>`;
+  if (spread) return {a: head + cal + legend, b: `<div class="phead"><div class="bar"><h2>오늘</h2></div></div>${todayBox}<p class="quiet">날짜를 누르면 그날 기분을 바꿀 수 있어요. 비어 있는 날은 그냥 비워 둬도 돼요.</p>`, fa:'기분', fb:'오늘 기분'};
+  return {a: head + todayBox + cal + legend, b:'', fa:'기분'};
+}
+function openMoodSheet(k){
+  root.innerHTML = `<div class="scrim" data-s="close"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${short(k)} 기분"><div class="in"><div class="grab"></div>
+    <h2 style="font-size:17px">${short(k)} 기분</h2>${moodPicker(k)}
+    ${S.mood[k] ? '<button class="act" data-s="clear">비우기</button>' : ''}</div></div>`;
+  root.hidden = false;
+  root.onclick = ev => {
+    const mb = ev.target.closest('[data-act="mood"]');
+    if (mb) { setMood(mb.dataset.k, +mb.dataset.v, true); closeSheet(); render(); return; }
+    const b = ev.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'clear') { delete S.mood[k]; persist('mood'); render(); }
+    closeSheet();
+  };
+}
+function setMood(k, v, force){
+  if (!force && S.mood[k] === v) delete S.mood[k]; else S.mood[k] = v;
+  persist('mood');
+}
+
+/* ---------- lists ---------- */
+function vLists(){
+  const L = S.lists.lists;
+  const box = l => `<section class="fbox"><h3>${esc(l.name)}<button class="xbtn" data-act="ldel" data-l="${l.id}">삭제</button></h3>
+    ${l.items.length ? `<ul class="entries">${l.items.map(it => `<li class="entry ${it.done ? 'done' : 'open'}" style="grid-template-columns:34px minmax(0,1fr) 34px"><button class="sig" data-act="ltog" data-l="${l.id}" data-i="${it.id}" aria-label="${it.done ? '체크 해제' : '체크'}">${it.done ? '×' : '•'}</button><span class="txt">${esc(it.text)}</span><button class="more" data-act="lidel" data-l="${l.id}" data-i="${it.id}" aria-label="항목 지우기">✕</button></li>`).join('')}</ul>` : ''}
+    <form class="row" data-lf="${l.id}"><input class="field" id="li-${l.id}" placeholder="+ 항목 추가" maxlength="120" aria-label="${esc(l.name)}에 추가"><button class="btn sm ghost">추가</button></form></section>`;
+  const sug = ['읽을 책','볼 영화','위시리스트','가고 싶은 곳','먹고 싶은 것'].filter(n => !L.some(l => l.name === n));
+  const adder = `<div class="panel"><h4>새 리스트</h4><form class="row" id="newList"><input class="field" id="nl" placeholder="리스트 이름" maxlength="24" aria-label="새 리스트 이름"><button class="btn sm">만들기</button></form>
+    ${sug.length ? `<div class="suggest" style="margin-top:8px">${sug.map(n => `<button class="chip" data-act="ladd" data-name="${n}">+ ${n}</button>`).join('')}</div>` : ''}</div>`;
+  const head = `<div class="phead"><div class="bar"><h2>리스트</h2></div></div>`;
+  if (!L.length) return {a: head + '<p class="quiet">언젠가 하고 싶은 것들을 모아 두는 곳이에요.</p>' + adder, b:'', fa:'리스트'};
+  if (spread) { const h = Math.ceil(L.length / 2); return {a: head + `<div class="fgrid">${L.slice(0,h).map(box).join('')}</div>`, b: `<div class="phead"><div class="bar"><h2 style="font-size:15px;color:var(--muted);font-weight:500">이어서</h2></div></div><div class="fgrid">${L.slice(h).map(box).join('')}</div>` + adder, fa:'리스트', fb:'리스트'}; }
+  return {a: head + `<div class="fgrid ${detail ? 'two' : ''}">${L.map(box).join('')}</div>` + adder, b:'', fa:'리스트'};
+}
+function addList(name){
+  name = (name || '').trim(); if (!name) return;
+  if (S.lists.lists.some(l => l.name === name)) return toast('이미 있는 리스트예요');
+  S.lists.lists.push({id:uid(), name, items:[]}); persist('lists');
+}
+
+/* ---------- review ---------- */
+let rmonth = todayKey().slice(0,7);
+const RQ = [['good','좋았던 것'],['meh','아쉬웠던 것'],['next','다음 달에 해볼 것']];
+function vReview(){
+  const r = S.reviews[rmonth] || {};
+  const head = `<div class="phead"><div class="bar"><button class="iconbtn" data-act="rprev" aria-label="이전 달">‹</button><h2>${monthLabel(rmonth)} 회고</h2><button class="iconbtn" data-act="rnext" aria-label="다음 달">›</button></div></div>`;
+  const fields = RQ.map(([k, l]) => `<div class="section-title">${l}</div><textarea class="field dtxt short" id="rv-${rmonth}-${k}" data-save="review:${rmonth}:${k}" maxlength="2000" placeholder="떠오르는 만큼만" aria-label="${l}">${esc(r[k] || '')}</textarea>`).join('');
+  const past = Object.keys(S.reviews).filter(m => m !== rmonth).sort().reverse();
+  const b = `<div class="phead"><div class="bar"><h2>지난 회고</h2></div></div>${past.length ? past.map(m => `<button class="dyr" data-act="rgo" data-m="${m}"><b>${monthLabel(m)}</b><span>${esc(trunc(S.reviews[m].good || S.reviews[m].next || S.reviews[m].meh || '', 70))}</span></button>`).join('') : '<p class="quiet">회고를 남긴 달이 여기 모여요.</p>'}`;
+  return {a: head + fields + '<p class="quiet" id="rvSaved">적으면 자동 저장돼요.</p>', b, fa:'회고', fb:'지난 회고'};
+}
+
+/* ---------- brain dump ---------- */
+function vDump(){
+  return {a:`<div class="phead"><div class="bar"><h2>브레인 덤프</h2><span class="sync" id="dumpSaved">자동 저장</span></div></div>
+    <textarea class="field dtxt dump" id="dumpTxt" data-save="dump" placeholder="정리하지 말고 생각나는 대로 쏟아내 보세요." aria-label="브레인 덤프">${esc(S.dump.text || '')}</textarea>`, b:'', fa:'브레인 덤프'};
+}
+
+/* ---------- search ---------- */
+let q = '';
+function vSearch(){
+  const head = `<div class="phead"><div class="bar"><h2>검색</h2></div><div class="row" style="margin-top:8px"><input class="field" id="q" data-search="1" value="${esc(q)}" placeholder="찾을 단어" aria-label="검색어" enterkeyhint="search"></div></div>`;
+  const term = q.trim().toLowerCase();
+  if (!term) return {a: head + '<p class="quiet">데일리, 퓨처로그, 만년다이어리, 리스트, 회고, 브레인 덤프에서 찾아요.</p>', b:'', fa:'검색'};
+  const hit = x => String(x || '').toLowerCase().includes(term), out = [];
+  for (const k of Object.keys(S.days).sort().reverse()) for (const e of S.days[k].entries) if (hit(e.text)) out.push(`<button class="dyr" data-act="goto" data-k="${k}"><b>${short(k)} · 데일리</b><span>${esc(sigOf(e))} ${esc(e.text)}</span></button>`);
+  for (const x of S.future.items) if (hit(x.text)) out.push(`<button class="dyr" data-act="tab" data-t="future"><b>${monthLabel(x.month)} · 퓨처로그</b><span>${esc(x.text)}</span></button>`);
+  for (const mm of Object.keys(S.diary)) for (const dd of Object.keys(S.diary[mm])) for (const y of Object.keys(S.diary[mm][dd])) if (hit(S.diary[mm][dd][y])) out.push(`<button class="dyr" data-act="dgo" data-md="${mm}-${dd}" data-y="${y}" data-tab="diary"><b>${y}.${mm}.${dd} · 만년다이어리</b><span>${esc(trunc(S.diary[mm][dd][y], 80))}</span></button>`);
+  for (const l of S.lists.lists) for (const it of l.items) if (hit(it.text) || hit(l.name)) out.push(`<button class="dyr" data-act="tab" data-t="lists"><b>${esc(l.name)} · 리스트</b><span>${esc(it.text)}</span></button>`);
+  for (const m of Object.keys(S.reviews)) for (const [k, l] of RQ) if (hit(S.reviews[m][k])) out.push(`<button class="dyr" data-act="rgo" data-m="${m}"><b>${monthLabel(m)} · 회고 · ${l}</b><span>${esc(trunc(S.reviews[m][k], 80))}</span></button>`);
+  if (hit(S.dump.text)) out.push(`<button class="dyr" data-act="tab" data-t="dump"><b>브레인 덤프</b><span>${esc(trunc(S.dump.text, 80))}</span></button>`);
+  return {a: head + (out.length ? `<p class="quiet" style="margin-top:8px">${out.length}개 찾았어요</p>` + out.slice(0, 200).join('') : '<p class="quiet">찾는 기록이 없어요.</p>'), b:'', fa:'검색'};
+}
+
+/* autosave for review / dump, live search */
+let svT = {}, qT;
+book.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.search) { clearTimeout(qT); qT = setTimeout(() => { q = t.value; render(); }, 200); return; }
+  const key = t.dataset.save; if (!key) return;
+  clearTimeout(svT[key]);
+  svT[key] = setTimeout(() => {
+    if (key === 'dump') { S.dump.text = t.value; persist('dump'); const el = document.getElementById('dumpSaved'); if (el) el.textContent = '저장됨'; return; }
+    const [, m, f] = key.split(':'), r = (S.reviews[m] ||= {});
+    if (t.value.trim()) r[f] = t.value; else delete r[f];
+    if (!Object.keys(r).length) delete S.reviews[m];
+    persist('reviews'); const el = document.getElementById('rvSaved'); if (el) el.textContent = '저장됨';
+  }, 600);
+});
+
+/* ---------- settings: choose and order pages ---------- */
+/* ---------- index ---------- */
+function vIndex(){
+  const on = enabled().filter(id => id !== 'index');
+  const pages = `<div class="section-title">페이지</div><div class="idx">${on.map((id, i) => `<button class="idxrow" data-act="tab" data-t="${id}"><span>${esc(pname(id))}</span><i>${i + 1}</i></button>`).join('')}</div>`;
+  const futs = [...new Set(S.future.items.map(x => x.month))].sort();
+  const coll = [
+    ...S.lists.lists.map(l => `<button class="idxrow" data-act="tab" data-t="lists"><span>리스트 · ${esc(l.name)}</span><i>${l.items.length}</i></button>`),
+    ...futs.map(m => `<button class="idxrow" data-act="fgo" data-m="${m}"><span>퓨처로그 · ${monthLabel(m)}</span><i>${S.future.items.filter(x => x.month === m).length}</i></button>`),
+    ...Object.keys(S.reviews).sort().reverse().map(m => `<button class="idxrow" data-act="rgo" data-m="${m}"><span>회고 · ${monthLabel(m)}</span><i></i></button>`)
+  ];
+  const collHTML = `<div class="section-title">모음</div>${coll.length ? `<div class="idx">${coll.join('')}</div>` : '<p class="quiet" style="margin-top:4px">리스트, 퓨처로그, 회고를 쓰면 여기에 차례로 쌓여요.</p>'}`;
+  const stars = [];
+  for (const k of Object.keys(S.days).sort().reverse()) for (const e of S.days[k].entries) if (e.pri && e.state !== 'released') stars.push([k, e]);
+  const starHTML = `<div class="section-title">중요 표시(*)한 기록</div>${stars.length ? stars.slice(0, 40).map(([k, e]) => `<button class="dyr" data-act="goto" data-k="${k}"><b>${short(k)}</b><span>${esc(sigOf(e))} ${esc(e.text)}</span></button>`).join('') : '<p class="quiet" style="margin-top:4px">기록에 * 를 붙이면 여기 모여요.</p>'}`;
+  const head = `<div class="phead"><div class="bar"><h2>인덱스</h2></div></div>`;
+  if (spread) return {a: head + pages + collHTML, b: `<div class="phead"><div class="bar"><h2>중요한 것들</h2></div></div>` + starHTML, fa:'인덱스', fb:'중요 표시'};
+  return {a: head + pages + collHTML + starHTML, b:'', fa:'인덱스'};
+}
+
+/* ---------- quick add from any page ---------- */
+function openQuickAdd(k){
+  const hidden = S.settings.hidden || [], vis = allTypes().filter(t => !hidden.includes(t.id));
+  let qt = 'task';
+  root.innerHTML = `<div class="scrim" data-s="close"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${short(k)}에 기록"><div class="in"><div class="grab"></div>
+    <div class="bar"><h2 style="font-size:17px">${k === todayKey() ? '오늘' : short(k)}에 기록</h2><button class="pill" data-s="goto">그날 열기</button></div>
+    <div class="typescroll" id="qaTypes">${vis.map(t => `<button type="button" class="type" data-qt="${esc(t.id)}" aria-pressed="${t.id === qt}"><i>${esc(t.sym)}</i>${esc(t.name)}</button>`).join('')}</div>
+    <form class="row" id="qaForm" autocomplete="off"><input class="field" id="qaText" maxlength="300" placeholder="빠르게 기록하기" enterkeyhint="done" aria-label="기록 내용"><button class="btn">추가</button></form>
+    <div id="qaDone"></div></div></div>`;
+  root.hidden = false;
+  const inp = root.querySelector('#qaText'); inp.focus();
+  root.onclick = ev => {
+    const tb = ev.target.closest('[data-qt]');
+    if (tb) { qt = tb.dataset.qt; root.querySelectorAll('[data-qt]').forEach(x => x.setAttribute('aria-pressed', String(x === tb))); inp.focus(); return; }
+    const b = ev.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'goto') { closeSheet(); cur = k; goTab('daily'); return; }
+    if (b.dataset.s === 'close') closeSheet();
+  };
+  root.querySelector('#qaForm').onsubmit = ev => {
+    ev.preventDefault();
+    const p = parse(inp.value.trim(), qt, false); if (!p.text) return;
+    const c = customOf(p.type);
+    addEntry(k, {id:uid(), type:p.type, text:p.text, state:'open', pri:p.pri, ...(c ? {sym:c.sym, toggle:!!c.toggle} : {})});
+    inp.value = ''; root.querySelector('#qaDone').innerHTML = `<p class="muted" style="margin:0;font-size:13px">${esc(sigOf({type:p.type, state:'open', sym:c?.sym}))} ${esc(p.text)} — 적었어요. 이어서 더 적어도 돼요.</p>`;
+    render();
+  };
+}
+
+/* ---------- backup ---------- */
+let pendingImport = null;
+const backupJSON = () => JSON.stringify({app:'bujo-journal', version:3, exportedAt:new Date().toISOString(), data:S}, null, 2);
+async function exportBackup(){
+  const name = `mylog-backup-${todayKey()}.json`, json = backupJSON();
+  // Android app: hand the file to the system "save as" screen
+  if (window.AndroidBridge && window.AndroidBridge.saveBackup) { window.AndroidBridge.saveBackup(name, json); return; }
+  // plain web page (e.g. GitHub Pages): an ordinary download
+  if (!window.claude) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([json], {type:'application/json'})); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(() => { a.remove(); URL.revokeObjectURL(a.href); }, 4000);
+    toast('백업 파일을 저장했어요'); return;
+  }
+  let dl = null; try { dl = window.claude?.use ? await window.claude.use('downloads') : null; } catch(e) {}
+  if (dl) {
+    try { await dl.save({filename:name, data:json}); toast('백업 파일을 저장했어요'); return; }
+    catch(e) { if (e && e.code === 'declined') return; if (e && e.code === 'rate_limited') return toast('잠시 뒤에 다시 눌러 주세요'); }
+  }
+  const box = root.querySelector('#importBox'); if (!box) return;
+  box.innerHTML = `<p class="muted" style="font-size:13px;margin:8px 0 4px">여기서는 파일로 저장할 수 없어요. 아래 내용을 복사해서 메모 앱 등에 보관해 주세요.</p>
+    <textarea class="field dtxt short" id="backupTxt" readonly>${esc(json)}</textarea><button class="btn sm ghost" data-s="copy" style="margin-top:6px">복사</button>`;
+}
+function readImport(file){
+  const r = new FileReader();
+  r.onload = () => {
+    let v; try { v = JSON.parse(r.result); } catch(e) { return toast('백업 파일을 읽지 못했어요. 이 앱에서 저장한 .json 파일인지 확인해 주세요'); }
+    if (!v || v.app !== 'bujo-journal' || !v.data) return toast('이 앱의 백업 파일이 아니에요');
+    pendingImport = v;
+    const n = Object.keys(v.data.days || {}).length, when = (v.exportedAt || '').slice(0,10);
+    const box = root.querySelector('#importBox');
+    if (box) box.innerHTML = `<div class="panel"><p style="margin:0 0 10px;font-size:14px">${when ? `${when}에 저장한 ` : ''}백업이에요 (기록한 날 ${n}일). 불러오면 <b>지금 기록이 이 백업으로 바뀌어요.</b></p>
+      <div class="acts"><button class="act danger" data-s="import-go">바꿔서 불러오기</button><button class="act" data-s="import-no">취소</button></div></div>`;
+  };
+  r.readAsText(file);
+}
+function importBackup(v){
+  if (!v) return;
+  const before = new Set([...allKeys(), ...Object.keys(remote)]);
+  const prev = clone(S);
+  S = normalizeS(v.data);
+  for (const k of new Set([...before, ...allKeys()])) { force.add(k); persist(k); }
+  pendingImport = null; closeSheet(); render();
+  toast('백업을 불러왔어요', () => { S = normalizeS(prev); for (const k of new Set([...before, ...allKeys()])) { force.add(k); persist(k); } render(); toast('불러오기 전으로 되돌렸어요'); });
+}
+
+function openSettings(){
+  const pl = pageList(), wl = widgetList();
+  const row = (kind, x, i, n, name, desc) => `<div class="srow ${x.on ? '' : 'off'}" data-id="${x.id}">
+    <label class="sw"><input type="checkbox" data-s="${kind}-on" data-i="${i}" ${x.on ? 'checked' : ''} aria-label="${name} 켜기"><span></span></label>
+    <div class="sname"><b>${name}</b>${desc ? `<small>${desc}</small>` : ''}</div>
+    <button class="handle" type="button" data-kind="${kind}" data-i="${i}" aria-label="${name} 순서 바꾸기. 끌거나 위아래 화살표 키로 옮겨요"><i></i><i></i><i></i></button></div>`;
+  root.innerHTML = `<div class="scrim" data-s="close"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="페이지 설정"><div class="in">
+    <div class="grab"></div>
+    <div class="bar"><h2 style="font-size:18px">내 저널 조립하기</h2><button class="pill" data-s="close">완료</button></div>
+    <p class="muted" style="margin:0;font-size:13.5px">쓰고 싶은 페이지만 켜고, 오른쪽 ≡ 를 끌어서 순서를 바꿔요. 꺼도 적어 둔 기록은 그대로 남아요.</p>
+    <div class="section-title">페이지 (위쪽 탭 순서)</div>
+    <div class="sgroup" data-kind="p">${pl.map((x, i) => { const p = PAGES.find(y => y.id === x.id); return row('p', x, i, pl.length, p.name, p.desc); }).join('')}</div>
+    <div class="section-title">데일리 아래 작은 칸</div>
+    <div class="sgroup" data-kind="w">${wl.map((x, i) => row('w', x, i, wl.length, WIDGETS.find(y => y.id === x.id).name, '')).join('')}</div>
+    <div class="section-title">기호</div>
+    <button class="act" data-s="types">기호 추가 · 숨기기</button>
+    <div class="section-title">아이패드 펼침 · 오른쪽 페이지</div>
+    <p class="muted" style="margin:0 0 4px;font-size:13px">노트를 펼쳐 볼 때 왼쪽 페이지 옆에 함께 둘 페이지를 골라요.</p>
+    ${enabled().map(id => { const pr = (S.settings.pairs || {})[id] || ''; return `<div class="kv pairrow"><span>${pname(id)}</span><select class="field sel" data-pair="${id}" aria-label="${pname(id)} 오른쪽 페이지"><option value="">자동</option>${enabled().filter(x => x !== id).map(x => `<option value="${x}" ${pr === x ? 'selected' : ''}>${pname(x)}</option>`).join('')}</select></div>`; }).join('')}
+    <div class="section-title">백업</div>
+    <p class="muted" style="margin:0 0 4px;font-size:13px">모든 기록을 파일 하나로 저장하거나, 저장해 둔 파일에서 되살려요.</p>
+    <div class="acts"><button class="act" data-s="export">백업 파일 저장</button><button class="act" data-s="import">백업 불러오기</button></div>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+    <div id="importBox"></div>
+  </div></div>`;
+  root.hidden = false;
+  const sheetEl = root.querySelector('.sheet');
+  root.onclick = ev => {
+    const b = ev.target.closest('[data-s]'); if (!b) return;
+    const s = b.dataset.s, i = +b.dataset.i;
+    if (s === 'close') return closeSheet();
+    if (s === 'types') { closeSheet(); return openTypeSheet(); }
+    if (s === 'export') return exportBackup();
+    if (s === 'import') return root.querySelector('#importFile').click();
+    if (s === 'import-go') return importBackup(pendingImport);
+    if (s === 'import-no') { pendingImport = null; root.querySelector('#importBox').innerHTML = ''; return; }
+    if (s === 'copy') { const ta = root.querySelector('#backupTxt'); const done = () => toast('복사했어요'); try { navigator.clipboard.writeText(ta.value).then(done, () => { ta.select(); }); } catch(e) { ta.select(); } return; }
+  };
+  /* drag by the ≡ handle (mouse, finger or pen) */
+  let drag = null;
+  const applyOrder = (kind, ids) => { const cur_ = kind === 'p' ? pageList() : widgetList(); saveLayout(kind, ids.map(id => cur_.find(x => x.id === id))); };
+  root.onpointerdown = ev => {
+    const h = ev.target.closest('.handle'); if (!h) return;
+    ev.preventDefault();
+    const rowEl = h.closest('.srow'), group = rowEl.parentElement;
+    drag = {rowEl, group, kind:h.dataset.kind, id:ev.pointerId, start:[...group.children].map(r => r.dataset.id).join()};
+    h.setPointerCapture(ev.pointerId);
+    rowEl.classList.add('dragging');
+  };
+  root.onpointermove = ev => {
+    if (!drag || ev.pointerId !== drag.id) return;
+    const y = ev.clientY, rows = [...drag.group.children].filter(r => r !== drag.rowEl);
+    let before = null;
+    for (const r of rows) { const b = r.getBoundingClientRect(); if (y < b.top + b.height / 2) { before = r; break; } }
+    if (before !== drag.rowEl.nextElementSibling || (!before && drag.group.lastElementChild !== drag.rowEl)) drag.group.insertBefore(drag.rowEl, before);
+    const sb = sheetEl.getBoundingClientRect();
+    if (y < sb.top + 60) sheetEl.scrollTop -= 10; else if (y > sb.bottom - 60) sheetEl.scrollTop += 10;
+  };
+  const endDrag = ev => {
+    if (!drag || ev.pointerId !== drag.id) return;
+    const d = drag; drag = null; d.rowEl.classList.remove('dragging');
+    const ids = [...d.group.children].map(r => r.dataset.id);
+    if (ids.join() !== d.start) applyOrder(d.kind, ids);
+  };
+  root.onpointerup = endDrag; root.onpointercancel = endDrag;
+  root.onkeydown = ev => {
+    const h = ev.target.closest('.handle'); if (!h || (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown')) return;
+    ev.preventDefault();
+    const kind = h.dataset.kind, i = +h.dataset.i, arr = kind === 'p' ? pageList() : widgetList(), j = ev.key === 'ArrowUp' ? i - 1 : i + 1;
+    if (j < 0 || j >= arr.length) return;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    saveLayout(kind, arr);
+    const nh = root.querySelector(`.sgroup[data-kind="${kind}"] .handle[data-i="${j}"]`); if (nh) nh.focus();
+  };
+  root.onchange = ev => {
+    const c = ev.target;
+    if (c.dataset.pair) { const pr = {...(S.settings.pairs || {})}; if (c.value) pr[c.dataset.pair] = c.value; else delete pr[c.dataset.pair]; S.settings.pairs = pr; persist('settings'); render(); return; }
+    if (c.id === 'importFile') { const f = c.files && c.files[0]; c.value = ''; if (f) readImport(f); return; }
+    if (!c.dataset.s || !c.dataset.s.endsWith('-on')) return;
+    const kind = c.dataset.s[0], arr = kind === 'p' ? pageList() : widgetList(), i = +c.dataset.i;
+    if (kind === 'p' && !c.checked && arr.filter(x => x.on).length <= 1) { c.checked = true; return toast('페이지가 하나는 켜져 있어야 해요'); }
+    arr[i] = {...arr[i], on:c.checked};
+    saveLayout(kind, arr);
+  };
+  function saveLayout(kind, arr){
+    const st = sheetEl.scrollTop;
+    if (kind === 'p') S.settings.pages = arr.map(x => ({id:x.id, on:!!x.on})); else S.settings.widgets = arr.map(x => ({id:x.id, on:!!x.on}));
+    if (!S.settings.pages) S.settings.pages = pageList().map(x => ({id:x.id, on:!!x.on}));
+    if (!S.settings.widgets) S.settings.widgets = widgetList().map(x => ({id:x.id, on:!!x.on}));
+    persist('settings');
+    if (kind === 'p' && !enabled().includes(tab)) tab = enabled()[0];
+    render(); openSettings();
+    const ns = root.querySelector('.sheet'); if (ns) ns.scrollTop = st;
+  }
+}
+
+/* ---------- render ---------- */
+const bodyA = document.getElementById('bodyA'), bodyB = document.getElementById('bodyB');
+const VIEWS = {index:vIndex, daily:vDaily, diary:vDiary, weekly:vWeekly, monthly:vMonthly, future:vFuture, habits:vHabits, mood:vMood, mandal:vMandal, lists:vLists, review:vReview, dump:vDump, search:vSearch};
+function render(){
+  const keep = {}; book.querySelectorAll('.pbody input[id], .pbody textarea[id]').forEach(i => keep[i.id] = i.value);
+  const act = document.activeElement && book.contains(document.activeElement) ? document.activeElement.id : null;
+  const selS = act ? document.activeElement.selectionStart : null, selE = act ? document.activeElement.selectionEnd : null;
+  const sA = bodyA.scrollTop, sB = bodyB.scrollTop;
+  if (!PAGES.some(p => p.id === tab) || (!navigated && !enabled().includes(tab))) tab = enabled()[0] || 'daily';
+  renderTabs();
+  document.getElementById('quickAdd').hidden = tab === 'daily';
+  document.getElementById('composer').hidden = tab !== 'daily';
+  renderTypes();
+  const pair = spread && (S.settings.pairs || {})[tab], partner = pair && pair !== tab && enabled().includes(pair) && VIEWS[pair] ? pair : null;
+  let r;
+  if (partner) {
+    // a chosen right-hand page: draw both pages in their single-page form, side by side
+    spread = false;
+    try { const L = VIEWS[tab](), Rt = VIEWS[partner](); r = {a:L.a, b:Rt.a, fa:L.fa, fb:pname(partner)}; } finally { spread = true; }
+  } else r = VIEWS[tab]();
+  if (spread) { bodyA.innerHTML = r.a; bodyB.innerHTML = r.b || ''; }
+  else bodyA.innerHTML = r.a + (detail && r.b ? '<div class="divider"></div>' + r.b.replace(/class="phead"/, 'class="phead" style="position:static;border:0"') : '');
+  document.getElementById('footA').textContent = r.fa || '';
+  document.getElementById('footB').textContent = r.fb || '';
+  bodyA.scrollTop = sA; bodyB.scrollTop = sB;
+  for (const id in keep) { const el = document.getElementById(id); if (el && book.contains(el)) el.value = keep[id]; }
+  if (act) { const el = document.getElementById(act); if (el) { el.focus({preventScroll:true}); try { if (selS != null) el.setSelectionRange(selS, selE); } catch(e) {} } }
+}
+const resetScroll = () => { bodyA.scrollTop = 0; bodyB.scrollTop = 0; };
+
+/* ---------- interactions ---------- */
+let navigated = false;
+function goTab(t){ navigated = true; tab = t; if (t === 'monthly') month = cur.slice(0,7); if (t === 'mandal') mfocus = -1; render(); resetScroll(); }
+document.querySelector('.tabs').addEventListener('click', e => {
+  if (e.target.closest('#openSettings')) return openSettings();
+  if (e.target.closest('#quickAdd')) return openQuickAdd(todayKey());
+  const b = e.target.closest('.tab[data-tab]'); if (b) goTab(b.dataset.tab);
+});
+
+book.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const li = b.closest('.entry'), k = li?.dataset.k, id = li?.dataset.id;
+  let reset = false;
+  switch (b.dataset.act) {
+    case 'prev': cur = addDays(cur,-1); reset = true; break;
+    case 'next': cur = addDays(cur,1); reset = true; break;
+    case 'today': cur = todayKey(); reset = true; break;
+    case 'mprev': month = addMonths(month,-1); reset = true; break;
+    case 'mnext': month = addMonths(month,1); reset = true; break;
+    case 'fprev': fstart = addMonths(fstart,-6); reset = true; break;
+    case 'fnext': fstart = addMonths(fstart,6); reset = true; break;
+    case 'hprev': hmonth = addMonths(hmonth,-1); break;
+    case 'hnext': hmonth = addMonths(hmonth,1); break;
+    case 'goto': cur = b.dataset.k; tab = 'daily'; reset = true; break;
+    case 'tomonth': month = b.dataset.m; tab = 'monthly'; reset = true; break;
+    case 'tab': return goTab(b.dataset.t);
+    case 'toggle': { const x = find(k,id); if (!x) return; x.state = x.state === 'done' ? 'open' : 'done'; persist(k); break; }
+    case 'ftoggle': { const x = fitem(id); if (!x) return; x.state = x.state === 'done' ? 'open' : 'done'; persist('future'); break; }
+    case 'more': return openSheet(k,id);
+    case 'fmore': return openFutureSheet(id);
+    case 'mig-today': migrate(k, id, todayKey()); toast('오늘로 이월했어요'); break;
+    case 'mig-all': { const t = todayKey(), l = openTasks(); for (const [kk,x] of l) migrate(kk, x.id, t); toast(`${l.length}개를 오늘로 이월했어요`); break; }
+    case 'hab': habToggle(b.dataset.h, b.dataset.k); break;
+    case 'hadd': addHabit(b.dataset.name); break;
+    case 'hdel': {
+      if (!b.classList.contains('armed')) { b.classList.add('armed'); b.textContent = '한 번 더 누르면 삭제'; return; }
+      const hid = b.dataset.h, hn = S.habits.list.find(h => h.id === hid)?.name || '';
+      withUndo(['habits'], `${hn} 습관을 지웠어요`, () => {
+        S.habits.list = S.habits.list.filter(h => h.id !== hid);
+        for (const d of Object.keys(S.habits.log)) { S.habits.log[d] = S.habits.log[d].filter(x => x !== hid); if (!S.habits.log[d].length) delete S.habits.log[d]; }
+        persist('habits');
+      }); break;
+    }
+    case 'sample':
+      [{type:'event',text:'14:00 치과 정기검진'},{type:'task',text:'기획안 초안 팀에 보내기',pri:true},{type:'task',text:'장보기: 두부, 대파, 달걀'},{type:'note',text:'점심 산책길에 은행나무가 물들기 시작함'}]
+        .forEach(x => addEntry(cur, {id:uid(), state:'open', pri:false, ...x}));
+      break;
+    case 'qadd': return openQuickAdd(b.dataset.k);
+    case 'fgo': fstart = b.dataset.m; tab = 'future'; reset = true; break;
+    case 'legend': showLegend = !showLegend; break;
+    case 'wprev': cur = addDays(cur,-7); reset = true; break;
+    case 'wnext': cur = addDays(cur,7); reset = true; break;
+    case 'moprev': moodMonth = addMonths(moodMonth,-1); break;
+    case 'monext': moodMonth = addMonths(moodMonth,1); break;
+    case 'mood': setMood(b.dataset.k, +b.dataset.v); break;
+    case 'moodday': return openMoodSheet(b.dataset.k);
+    case 'rprev': rmonth = addMonths(rmonth,-1); reset = true; break;
+    case 'rnext': rmonth = addMonths(rmonth,1); reset = true; break;
+    case 'rgo': rmonth = b.dataset.m; tab = 'review'; reset = true; break;
+    case 'ladd': addList(b.dataset.name); break;
+    case 'ltog': { const l = S.lists.lists.find(x => x.id === b.dataset.l), it = l?.items.find(x => x.id === b.dataset.i); if (!it) return; it.done = !it.done; persist('lists'); break; }
+    case 'lidel': { const l = S.lists.lists.find(x => x.id === b.dataset.l); if (!l) return; withUndo(['lists'], '항목을 지웠어요', () => { l.items = l.items.filter(x => x.id !== b.dataset.i); persist('lists'); }); break; }
+    case 'ldel': { if (!b.classList.contains('armed')) { b.classList.add('armed'); b.textContent = '한 번 더 누르면 삭제'; return; } const ln = S.lists.lists.find(x => x.id === b.dataset.l)?.name || ''; withUndo(['lists'], `${ln} 리스트를 지웠어요`, () => { S.lists.lists = S.lists.lists.filter(x => x.id !== b.dataset.l); persist('lists'); }); break; }
+    case 'past': showPast = !showPast; break;
+    case 'release': { const x = find(k,id); if (!x) return; x.state = 'released'; persist(k); toast('놓아줬어요'); break; }
+    case 'release-all': { const l = openTasks(); for (const [kk,x] of l) { x.state = 'released'; persist(kk); } showPast = false; toast('지난 할 일을 모두 놓아줬어요'); break; }
+    case 'mfocus': mfocus = +b.dataset.i; if (detail) return openMandalSheet('s', mfocus, 0); reset = true; break;
+    case 'mback': mfocus = -1; reset = true; break;
+    case 'medit': return openMandalSheet(b.dataset.w, +b.dataset.i || 0, +b.dataset.j || 0);
+    case 'dprev': dmd = mdShift(dmd, -1); reset = true; break;
+    case 'dnext': dmd = mdShift(dmd, 1); reset = true; break;
+    case 'dmprev': dmd = addMonths('2024-' + dmd.slice(0,2), -1).slice(5) + '-01'; break;
+    case 'dmnext': dmd = addMonths('2024-' + dmd.slice(0,2), 1).slice(5) + '-01'; break;
+    case 'dyprev': dyear--; break;
+    case 'dynext': dyear++; break;
+    case 'dyear': dyear = Number(b.dataset.y); reset = true; break;
+    case 'dgo': dmd = b.dataset.md; if (b.dataset.y) dyear = Number(b.dataset.y); if (b.dataset.tab) tab = b.dataset.tab; reset = true; break;
+    default: return;
+  }
+  render(); if (reset) resetScroll();
+});
+
+function addHabit(name){
+  name = (name || '').trim(); if (!name) return;
+  if (S.habits.list.some(h => h.name === name)) return toast('이미 있는 습관이에요');
+  S.habits.list.push({id:uid(), name}); persist('habits');
+}
+book.addEventListener('submit', e => {
+  const f = e.target;
+  if (f.id === 'composer') return;
+  e.preventDefault();
+  if (f.id === 'newList') { const i = f.querySelector('input'); addList(i.value); i.value = ''; render(); return; }
+  if (f.dataset.lf) { const i = f.querySelector('input'), v = i.value.trim(); if (!v) return; const l = S.lists.lists.find(x => x.id === f.dataset.lf); if (!l) return; l.items.push({id:uid(), text:v, done:false}); persist('lists'); i.value = ''; render(); return; }
+  if (f.id === 'habForm') { const i = f.querySelector('input'); addHabit(i.value); i.value = ''; render(); return; }
+  if (f.dataset.fm) {
+    const i = f.querySelector('input'), p = parse(i.value.trim(), 'task', false);
+    if (!p.text) return;
+    S.future.items.push({id:uid(), month:f.dataset.fm, type:p.type, text:p.text, pri:p.pri, state:'open'});
+    persist('future'); i.value = ''; render();
+  }
+});
+
+const composer = document.getElementById('composer'), input = document.getElementById('entryText'), starBtn = document.getElementById('star');
+composer.addEventListener('click', e => {
+  if (e.target.closest('#addType')) return openTypeSheet();
+  const t = e.target.closest('.type');
+  if (t) { type = t.dataset.type; for (const b of composer.querySelectorAll('.type')) b.setAttribute('aria-pressed', String(b === t)); input.focus(); }
+  if (e.target.closest('#star')) { pri = !pri; starBtn.setAttribute('aria-pressed', String(pri)); input.focus(); }
+});
+composer.addEventListener('submit', e => {
+  e.preventDefault();
+  const p = parse(input.value.trim(), type, pri); if (!p.text) return;
+  const c = customOf(p.type);
+  addEntry(cur, {id:uid(), type:p.type, text:p.text, state:'open', pri:p.pri, ...(c ? {sym:c.sym, toggle:!!c.toggle} : {})});
+  input.value = ''; pri = false; starBtn.setAttribute('aria-pressed','false');
+  render();
+  requestAnimationFrame(() => { bodyA.scrollTop = bodyA.scrollHeight; });
+});
+
+/* ---------- sheets ---------- */
+const root = document.getElementById('sheetRoot');
+function closeSheet(){ root.hidden = true; root.innerHTML = ''; root.onclick = null; root.onchange = null; }
+function sheet(e, acts, extra){
+  root.innerHTML = `<div class="scrim" data-s="close"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="항목 편집"><div class="in">
+    <div class="grab"></div>
+    <div class="row"><input id="editText" class="field" value="${esc(e.text)}" maxlength="300" aria-label="내용 수정"><button class="btn" data-s="save">저장</button></div>
+    <div class="acts">${acts}</div>${extra || ''}
+  </div></div>`;
+  root.hidden = false;
+  root.querySelector('#editText').addEventListener('keydown', ev => { if (ev.key === 'Enter') root.querySelector('[data-s="save"]').click(); });
+}
+function armDelete(b){ if (b.classList.contains('armed')) return true; b.classList.add('armed'); b.textContent = '한 번 더 누르면 삭제'; return false; }
+
+function openSheet(k, id){
+  const e = find(k,id); if (!e) return;
+  const tomorrow = addDays(k,1), mv = movable(e), nextM = addMonths(k.slice(0,7), 1);
+  sheet(e, `${togg(e) ? `<button class="act" data-s="done">${e.state === 'done' ? '× 완료 취소' : '× 완료'}</button>` : ''}
+      <button class="act" data-s="pri">${e.pri ? '중요 해제' : '* 중요 표시'}</button>
+      ${mv ? `<button class="act" data-s="tomorrow">&gt; ${short(tomorrow)}로 이월</button>` : ''}
+      ${mv && k !== todayKey() ? `<button class="act" data-s="today">&gt; 오늘로 이월</button>` : ''}
+      <button class="act" data-s="cancel">${e.state === 'cancelled' ? '취소선 해제' : '취소선 (안 하기로 함)'}</button>
+      <button class="act danger" data-s="del">삭제</button>`,
+    `${mv ? `<div class="datepick"><input type="date" id="migDate" value="${tomorrow}" aria-label="이월할 날짜"><button class="btn ghost" data-s="mig">&gt; 이 날로 이월</button></div>
+      <div class="datepick"><input type="month" id="futMonth" value="${nextM}" aria-label="보낼 달"><button class="btn ghost" data-s="tofuture">&lt; 퓨처로그로</button></div>` : ''}
+    <div class="datepick">${S.lists.lists.length ? `<select class="field" id="toList" aria-label="보낼 리스트">${S.lists.lists.map(l => `<option value="${l.id}">${esc(l.name)}</option>`).join('')}<option value="__new">+ 새 리스트</option></select>` : ''}
+      <input class="field" id="toListNew" placeholder="새 리스트 이름" maxlength="24" aria-label="새 리스트 이름" ${S.lists.lists.length ? 'hidden' : ''}>
+      <button class="btn ghost" data-s="tolist">&gt; 리스트로</button></div>`);
+  root.onchange = ev => { if (ev.target.id === 'toList') { const n = root.querySelector('#toListNew'); n.hidden = ev.target.value !== '__new'; if (!n.hidden) n.focus(); } };
+  root.onclick = ev => {
+    const b = ev.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'close') return closeSheet();
+    if (a === 'save') { const v = root.querySelector('#editText').value.trim(); if (v) { e.text = v; persist(k); } }
+    if (a === 'done') { e.state = e.state === 'done' ? 'open' : 'done'; persist(k); }
+    if (a === 'pri') { e.pri = !e.pri; persist(k); }
+    if (a === 'cancel') { e.state = e.state === 'cancelled' ? 'open' : 'cancelled'; persist(k); }
+    if (a === 'tomorrow') { migrate(k, id, tomorrow); toast(`${short(tomorrow)}로 이월했어요`); }
+    if (a === 'today') { migrate(k, id, todayKey()); toast('오늘로 이월했어요'); }
+    if (a === 'mig') { const v = root.querySelector('#migDate').value; if (!v) return; migrate(k, id, v); toast(`${short(v)}로 이월했어요`); }
+    if (a === 'tofuture') {
+      const v = root.querySelector('#futMonth').value; if (!/^\d{4}-\d{2}$/.test(v)) return;
+      S.future.items.push({id:uid(), month:v, type:e.type, text:e.text, pri:e.pri, state:'open', ...extra(e)});
+      e.state = 'scheduled'; persist(k); persist('future'); toast(`${monthLabel(v)} 퓨처로그로 보냈어요`);
+    }
+    if (a === 'tolist') {
+      const sel = root.querySelector('#toList'), nw = root.querySelector('#toListNew').value.trim();
+      let l = sel && sel.value !== '__new' ? S.lists.lists.find(x => x.id === sel.value) : null;
+      if (!l) { if (!nw) { root.querySelector('#toListNew').hidden = false; root.querySelector('#toListNew').focus(); return toast('새 리스트 이름을 적어 주세요'); }
+        l = S.lists.lists.find(x => x.name === nw) || (S.lists.lists.push({id:uid(), name:nw, items:[]}), S.lists.lists[S.lists.lists.length - 1]); }
+      l.items.push({id:uid(), text:e.text, done:false}); persist('lists');
+      e.state = 'migrated'; e.to = l.name; persist(k);
+      toast(enabled().includes('lists') ? `${l.name} 리스트로 보냈어요` : `${l.name} 리스트로 보냈어요. 리스트 페이지는 ⚙에서 켤 수 있어요`);
+    }
+    if (a === 'del') withUndo([k], '기록을 지웠어요', () => { removeEntry(k, id); persist(k); });
+    closeSheet(); render();
+  };
+}
+function openFutureSheet(id){
+  const e = fitem(id); if (!e) return;
+  const t = todayKey(), def = e.month === t.slice(0,7) ? t : e.month + '-01';
+  sheet(e, `${togg(e) ? `<button class="act" data-s="done">${e.state === 'done' ? '× 완료 취소' : '× 완료'}</button>` : ''}
+      <button class="act" data-s="pri">${e.pri ? '중요 해제' : '* 중요 표시'}</button>
+      <button class="act" data-s="next">&gt; 다음 달로 미루기</button>
+      <button class="act danger" data-s="del">삭제</button>`,
+    `<div class="datepick"><input type="date" id="schedDate" value="${def}" aria-label="데일리에 넣을 날짜"><button class="btn ghost" data-s="sched">이 날 데일리에 넣기</button></div>`);
+  root.onclick = ev => {
+    const b = ev.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'close') return closeSheet();
+    if (a === 'save') { const v = root.querySelector('#editText').value.trim(); if (v) e.text = v; }
+    if (a === 'done') e.state = e.state === 'done' ? 'open' : 'done';
+    if (a === 'pri') e.pri = !e.pri;
+    if (a === 'next') { e.month = addMonths(e.month, 1); toast(`${monthLabel(e.month)}로 미뤘어요`); }
+    if (a === 'sched') {
+      const v = root.querySelector('#schedDate').value; if (!v) return;
+      addEntry(v, {id:uid(), type:e.type, text:e.text, state:'open', pri:e.pri, from:'future', ...extra(e)});
+      e.state = 'migrated'; toast(`${short(v)} 데일리에 넣었어요`);
+    }
+    if (a === 'del') { closeSheet(); withUndo(['future'], '계획을 지웠어요', () => { removeFuture(id); persist('future'); }); render(); return; }
+    persist('future'); closeSheet(); render();
+  };
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !root.hidden) closeSheet(); });
+/* Android back button: close an open sheet first, then go back to the first page; false lets the app close */
+window.bujoBack = () => {
+  if (!root.hidden) { closeSheet(); return true; }
+  const first = enabled()[0] || 'daily';
+  if (tab !== first) { goTab(first); return true; }
+  return false;
+};
+
+/* ---------- custom signifiers ---------- */
+const chipsEl = document.getElementById('typeChips'), BASE = ['task','event','note'];
+let moreTypes = false;
+function renderTypes(){
+  const hidden = S.settings.hidden || [], vis = allTypes().filter(t => !hidden.includes(t.id));
+  if (!vis.some(t => t.id === type)) type = 'task';
+  const sl = chipsEl.scrollLeft;
+  chipsEl.innerHTML = vis.map(t => `<button type="button" class="type" data-type="${esc(t.id)}" aria-pressed="${t.id === type}"><i>${esc(t.sym)}</i>${esc(t.name)}</button>`).join('')
+    + `<button type="button" class="type" id="addType" aria-label="기호 추가와 관리">+ 기호</button>`;
+  chipsEl.scrollLeft = sl;
+}
+function openTypeSheet(){
+  const list = S.settings.types;
+  root.innerHTML = `<div class="scrim" data-s="close"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="내 기호"><div class="in">
+    <div class="grab"></div>
+    <h2 style="font-size:17px">내 기호 만들기</h2>
+    <div class="row"><input id="tSym" class="field" maxlength="2" placeholder="기호" style="flex:0 0 68px;text-align:center" aria-label="기호"><input id="tName" class="field" maxlength="12" placeholder="이름 (예: 약속, 읽을 책)" aria-label="이름"></div>
+    <div class="suggest">${['★','♪','✎','◇','△','→','✓','#','@','$'].map(s => `<button class="chip" data-s="pick" data-v="${s}">${s}</button>`).join('')}</div>
+    <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="tTog"> 할 일처럼 눌러서 완료(×) 체크하기</label>
+    <button class="btn" data-s="addt">기호 추가</button>
+    <div class="section-title">기본 기호 · 안 쓰는 건 숨기기</div>
+    ${BUILTIN.filter(t => t.id !== 'task').map(t => { const h = (S.settings.hidden || []).includes(t.id); return `<div class="kv"><span style="${h ? 'color:var(--faint)' : ''}"><b style="margin-right:6px;color:inherit">${t.sym}</b>${t.name}</span><button class="xbtn" data-s="hide" data-id="${t.id}">${h ? '다시 보이기' : '숨기기'}</button></div>`; }).join('')}
+    ${list.length ? `<div class="section-title">내가 만든 기호</div>${list.map(t => `<div class="kv"><span><b style="color:var(--ink);margin-right:6px">${esc(t.sym)}</b>${esc(t.name)}${t.toggle ? ' · 완료 체크' : ''}</span><button class="xbtn" data-s="delt" data-id="${t.id}">삭제</button></div>`).join('')}` : ''}
+  </div></div>`;
+  root.hidden = false;
+  root.onclick = ev => {
+    const b = ev.target.closest('[data-s]'); if (!b) return;
+    const a = b.dataset.s;
+    if (a === 'close') return closeSheet();
+    if (a === 'pick') { root.querySelector('#tSym').value = b.dataset.v; root.querySelector('#tName').focus(); return; }
+    if (a === 'hide') {
+      const h = S.settings.hidden || [], id = b.dataset.id;
+      S.settings.hidden = h.includes(id) ? h.filter(x => x !== id) : [...h, id];
+      persist('settings'); render(); openTypeSheet(); return;
+    }
+    if (a === 'addt') {
+      const sym = root.querySelector('#tSym').value.trim(), name = root.querySelector('#tName').value.trim();
+      if (!sym || !name) return toast('기호와 이름을 모두 적어 주세요');
+      if (allTypes().some(t => t.sym === sym)) return toast('이미 쓰고 있는 기호예요');
+      const t = {id:'c_' + uid(), sym, name, toggle:root.querySelector('#tTog').checked};
+      S.settings.types.push(t); persist('settings'); type = t.id;
+      closeSheet(); render(); toast(`${sym} ${name} 기호를 추가했어요`); return;
+    }
+    if (a === 'delt') {
+      if (!armDelete(b)) return;
+      closeSheet();
+      withUndo(['settings'], '기호를 지웠어요. 적어 둔 기록은 그대로예요', () => { S.settings.types = S.settings.types.filter(t => t.id !== b.dataset.id); persist('settings'); });
+      render();
+    }
+  };
+}
+
+window.bujoToast = m => toast(m);
+let tt; function toast(msg, undo){
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span>${esc(msg)}</span>${undo ? '<button type="button" id="undoBtn">되돌리기</button>' : ''}`;
+  t.hidden = false; clearTimeout(tt);
+  if (undo) t.querySelector('#undoBtn').onclick = () => { clearTimeout(tt); t.hidden = true; undo(); };
+  tt = setTimeout(() => t.hidden = true, undo ? 6000 : 2200);
+}
+/* deletions can be undone for a few seconds */
+function withUndo(keys, msg, fn){
+  const snap = keys.map(k => [k, clone(getPart(k))]);
+  fn();
+  toast(msg, () => {
+    for (const [k, v] of snap) {
+      let val = v;
+      if (val && (isDay(k) || k === 'future')) {
+        const f = isDay(k) ? 'entries' : 'items', dead = new Set([...(getPart(k)?.del || []), ...(remote[k]?.del || [])]);
+        val = {...val, [f]:val[f].map(x => dead.has(x.id) ? {...x, id:uid()} : x)};
+      }
+      setPart(k, val); persist(k);
+    }
+    render(); toast('되돌렸어요');
+  });
+}
+function removeEntry(k, id){ const d = S.days[k]; if (!d) return; d.entries = d.entries.filter(x => x.id !== id); (d.del ||= []).push(id); }
+function removeFuture(id){ S.future.items = S.future.items.filter(x => x.id !== id); (S.future.del ||= []).push(id); }
+
+/* swipe left / right to turn pages (day, week, month) */
+let sw0 = null;
+book.addEventListener('touchstart', e => {
+  if (e.touches.length !== 1 || e.target.closest('input,textarea,select,button.handle,.typescroll,.tablewrap,.m9,.m3,.composer')) { sw0 = null; return; }
+  sw0 = {x:e.touches[0].clientX, y:e.touches[0].clientY, t:Date.now()};
+}, {passive:true});
+book.addEventListener('touchend', e => {
+  if (!sw0) return; const t = e.changedTouches[0], dx = t.clientX - sw0.x, dy = t.clientY - sw0.y, quick = Date.now() - sw0.t < 600; sw0 = null;
+  if (!quick || Math.abs(dx) < 70 || Math.abs(dy) > 50) return;
+  const n = dx < 0 ? 1 : -1;
+  const turn = {daily:() => cur = addDays(cur, n), weekly:() => cur = addDays(cur, 7 * n), monthly:() => month = addMonths(month, n), mood:() => moodMonth = addMonths(moodMonth, n),
+    diary:() => dmd = mdShift(dmd, n), habits:() => hmonth = addMonths(hmonth, n), review:() => rmonth = addMonths(rmonth, n), future:() => fstart = addMonths(fstart, 6 * n)}[tab];
+  if (!turn) return;
+  turn(); render(); resetScroll();
+  book.classList.remove('turn-l','turn-r'); void book.offsetWidth; book.classList.add(n > 0 ? 'turn-l' : 'turn-r');
+}, {passive:true});
+
+/* keep "today" correct when the page stays open past midnight or comes back from the background */
+let lastToday = todayKey();
+function checkToday(){
+  const t = todayKey(); if (t === lastToday) return;
+  if (cur === lastToday) cur = t;
+  if (dmd === lastToday.slice(5)) { dmd = t.slice(5); dyear = Number(t.slice(0,4)); }
+  if (month === lastToday.slice(0,7)) month = t.slice(0,7);
+  if (hmonth === lastToday.slice(0,7)) hmonth = t.slice(0,7);
+  lastToday = t; render();
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkToday(); });
+window.addEventListener('focus', checkToday);
+setInterval(checkToday, 60000);
+
+layout();
+render();
+connect();
+})();
+</script>
+
+</body>
+</html>
